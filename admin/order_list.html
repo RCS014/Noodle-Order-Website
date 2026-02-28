@@ -52,8 +52,13 @@
         
         <div class="absolute inset-0 noodle-pattern pointer-events-none"></div>
         
-        <aside class="w-80 bg-white dark:bg-slate-900 border-l border-slate-200 dark:border-slate-800 flex flex-col relative z-20 sm:w-1/16">
-            <div class="p-8 flex flex-col items-center text-center">
+        <aside id="sidebar" class="w-80 bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 flex flex-col fixed inset-y-0 left-0 z-50 transform -translate-x-full transition-transform duration-300 md:relative md:translate-x-0 shadow-2xl md:shadow-none">
+            
+            <button id="close-sidebar-btn" class="absolute top-4 right-4 md:hidden p-2 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition-colors">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+
+            <div class="p-8 flex flex-col items-center text-center mt-4 md:mt-0">
                 <div class="w-24 h-24 rounded-full bg-primary/10 flex items-center justify-center p-2 mb-4 ring-4 ring-primary/5">
                     <div class="w-full h-full rounded-full bg-cover bg-center shadow-inner" data-alt="Logo for boat noodle shop P Prateep" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBQ5TQYrIKsPSEfUMXYfYUcd0a-MIaV2R7GVudVQAQAelUyzxZPYY_5yl0CGPhtiRM480QSGfTiaSeQ1c3omiDjc67jZL7aw7semk6SZKOX1HbELLGjZSOIT96x2zvELMgNLi2VEh7aAc4DMI1QwsHJGslkyV-oQ89r5EFkXcJpsUCaMY4tTWPjInEk7l346caUyI_qpdJ9m5Mm04BsXbfi2ZkPssFwT9QLyN_DXZWdShw6kbwaZ-Nvo6SBBWA1E0bDOQepnghQQ_5U');"></div>
                 </div>
@@ -61,7 +66,7 @@
                 <p class="text-primary font-bold text-sm tracking-wide">ก๋วยเตี๋ยวเรือ อยุธยา</p>
             </div>
             
-            <nav class="flex-1 px-4 space-y-2 mt-4">
+            <nav class="flex-1 px-4 space-y-2 mt-4 overflow-y-auto">
                 <a class="flex items-center gap-4 px-4 py-4 rounded-2xl bg-primary text-white shadow-lg shadow-primary/25 transition-all" href="#">
                     <span class="material-symbols-outlined filled">list_alt</span>
                     <span class="font-bold">ออเดอร์ (Orders)</span>
@@ -80,7 +85,7 @@
                 </a>
             </nav>
             
-            <div class="p-4 border-t border-slate-100 dark:border-slate-800">
+            <div class="p-4 border-t border-slate-100 dark:border-slate-800 mt-auto">
                 <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800 flex items-center gap-4 mb-4">
                     <div class="w-10 h-10 rounded-xl bg-primary/20 flex items-center justify-center text-primary">
                         <span class="material-symbols-outlined">person</span>
@@ -96,25 +101,30 @@
                 </button>
             </div>
         </aside>
-        
-        <!-- Main Content Area (Left side) -->
-        <main class="flex-1 flex flex-col overflow-y-auto relative z-10 p-6 w-7/8 lg:p-10">
+
+        <main class="flex-1 flex flex-col overflow-y-auto relative z-10 p-6 lg:p-10">
             
             <header class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
-                <div>
-                    <h1 class="text-4xl font-black text-slate-900 dark:text-white tracking-tight">ออเดอร์ที่เข้ามา</h1>
-                    <p class="text-slate-500 dark:text-slate-400 mt-1 font-medium flex items-center gap-2">
-                        <span class="relative flex h-3 w-3">
-                            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
-                            <span class="relative inline-flex rounded-full h-3 w-3 bg-primary"></span>
-                        </span>
-                        จัดการคำสั่งซื้อแบบเรียลไทม์
-                    </p>
+                <div class="flex items-start gap-4 w-full md:w-auto">
+                    <button id="mobile-menu-btn" class="md:hidden flex items-center justify-center p-2 mt-1 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl shadow-sm hover:bg-slate-50 transition-colors">
+                        <span class="material-symbols-outlined text-2xl text-slate-700 dark:text-slate-200">menu</span>
+                    </button>
+                    <div>
+                        <h1 class="text-4xl font-black text-slate-900 dark:text-white tracking-tight">ออเดอร์ที่เข้ามา</h1>
+                        <p class="text-slate-500 dark:text-slate-400 mt-1 font-medium flex items-center gap-2">
+                            <span class="relative flex h-3 w-3">
+                                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
+                                <span class="relative inline-flex rounded-full h-3 w-3 bg-primary"></span>
+                            </span>
+                            จัดการคำสั่งซื้อแบบเรียลไทม์
+                        </p>
+                    </div>
                 </div>
+                
                 <div class="flex gap-3">
                     <button class="flex items-center gap-2 px-4 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl shadow-sm hover:bg-slate-50 transition-colors">
                         <span class="material-symbols-outlined text-xl">refresh</span>
-                        <span class="font-bold text-sm">รีเฟรช</span>
+                        <span class="font-bold text-sm hidden sm:inline">รีเฟรช</span>
                     </button>
                     <button class="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-xl shadow-lg shadow-primary/20 hover:bg-primary/90 transition-colors">
                         <span class="material-symbols-outlined text-xl">history</span>
@@ -124,7 +134,6 @@
             </header>
 
             <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-                
                 <div class="bg-white dark:bg-slate-900 rounded-xl shadow-md border border-slate-100 dark:border-slate-800 flex flex-col h-full hover:shadow-xl transition-shadow">
                     <div class="p-5 border-b border-slate-50 dark:border-slate-800 flex justify-between items-start">
                         <div>
@@ -240,10 +249,30 @@
                         </button>
                     </div>
                 </div>
-
             </div>
         </main>
 
+        <div id="sidebar-overlay" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-40 hidden md:hidden transition-opacity"></div>
+
     </div>
+
+    <script>
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const closeSidebarBtn = document.getElementById('close-sidebar-btn');
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('sidebar-overlay');
+
+        function toggleSidebar() {
+            // สลับคลาส translate-x-full เพื่อเลื่อนเข้า/ออก
+            sidebar.classList.toggle('-translate-x-full');
+            // สลับการแสดงผล Overlay
+            overlay.classList.toggle('hidden');
+        }
+
+        // ผูก Event Click กับปุ่มและ Overlay
+        mobileMenuBtn.addEventListener('click', toggleSidebar);
+        closeSidebarBtn.addEventListener('click', toggleSidebar);
+        overlay.addEventListener('click', toggleSidebar);
+    </script>
 </body>
 </html>
