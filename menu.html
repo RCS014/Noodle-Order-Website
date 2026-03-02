@@ -246,7 +246,7 @@ if(val<1) val=1;
 q.value=val;
 }
 
-/* ===== แก้ addNoodle ตามคำสั่ง ===== */
+/* ===== addNoodle ตามคำสั่ง ===== */
 function addNoodle(){
 if(!selectedNoodle||!selectedSoup){
 showToast("กรุณาเลือกเส้นและน้ำซุป");
@@ -326,7 +326,7 @@ function closeCart(){
 document.getElementById("cartModal").classList.add("hidden");
 }
 
-/* ===== แก้ renderCart เอาสถานะออก + แสดง size ===== */
+
 function renderCart(){
 let total=0;
 const box=document.getElementById("cartItems");
@@ -376,7 +376,11 @@ i.status="กำลังทำ";
 });
 orderHistory = orderHistory.concat(cart);
 localStorage.setItem("orderHistory",JSON.stringify(orderHistory));
+
+localStorage.setItem("orderHistory",JSON.stringify(orderHistory));
 localStorage.setItem("currentTable",document.getElementById("table").value);
+localStorage.setItem("selectedStatusTable",document.getElementById("table").value);
+
 cart=[];
 updateCart();
 closeCart();
@@ -396,6 +400,9 @@ showToast("อัปเดตเป็นพร้อมเสิร์ฟแล
 
 function checkOldStatus(){
 let table=document.getElementById("table").value;
+
+localStorage.setItem("selectedStatusTable", table);
+
 let box=document.getElementById("statusNotice");
 let oldOrders=orderHistory.filter(o=>o.table===table);
 
