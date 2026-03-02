@@ -65,7 +65,7 @@ class="w-full border rounded-lg p-2">
 </audio>
 
 <script>
-let table = localStorage.getItem("currentTable");
+let table = localStorage.getItem("selectedStatusTable") || localStorage.getItem("currentTable");
 let orderHistory = JSON.parse(localStorage.getItem("orderHistory")) || [];
 let notified=false;
 
@@ -89,9 +89,13 @@ document.getElementById("queueNumber").innerText="-";
 return;
 }
 
-document.getElementById("queueNumber").innerText=myOrders[0].queue;
 
-let allReady=myOrders.every(o=>o.status==="พร้อมเสิร์ฟ");
+let latestQueue = Math.max(...myOrders.map(o=>o.queue));
+let currentOrders = myOrders.filter(o=>o.queue===latestQueue);
+
+document.getElementById("queueNumber").innerText=latestQueue;
+
+let allReady=currentOrders.every(o=>o.status==="พร้อมเสิร์ฟ");
 
 if(allReady){
 document.getElementById("statusBox").innerHTML="✅ พร้อมเสิร์ฟแล้ว";
