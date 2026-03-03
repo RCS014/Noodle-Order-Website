@@ -59,12 +59,15 @@
 
         <div id="sidebar-overlay" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-40 hidden md:hidden transition-opacity"></div>
 
+        <!--แถบด้านข้าง-->
         <aside id="sidebar" class="w-80 bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 flex flex-col fixed inset-y-0 left-0 z-50 transform -translate-x-full transition-transform duration-300 md:relative md:translate-x-0 shadow-2xl md:shadow-none">
             
+            <!--ปุ่มซ่อนแถบด้านข้าง (กรณีจอมือถือ)-->
             <button id="close-sidebar-btn" class="absolute top-4 right-4 md:hidden p-2 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition-colors">
                 <span class="material-symbols-outlined">close</span>
             </button>
-
+            
+            <!--ชื่อร้าน-->
             <div class="p-8 flex flex-col items-center text-center mt-4 md:mt-0">
                 <div class="w-24 h-24 rounded-full bg-primary/10 flex items-center justify-center p-2 mb-4 ring-4 ring-primary/5">
                     <div class="w-full h-full rounded-full bg-cover bg-center shadow-inner" data-alt="Logo for boat noodle shop P Prateep" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBQ5TQYrIKsPSEfUMXYfYUcd0a-MIaV2R7GVudVQAQAelUyzxZPYY_5yl0CGPhtiRM480QSGfTiaSeQ1c3omiDjc67jZL7aw7semk6SZKOX1HbELLGjZSOIT96x2zvELMgNLi2VEh7aAc4DMI1QwsHJGslkyV-oQ89r5EFkXcJpsUCaMY4tTWPjInEk7l346caUyI_qpdJ9m5Mm04BsXbfi2ZkPssFwT9QLyN_DXZWdShw6kbwaZ-Nvo6SBBWA1E0bDOQepnghQQ_5U');"></div>
@@ -73,6 +76,7 @@
                 <p class="text-primary font-bold text-sm tracking-wide">ก๋วยเตี๋ยวเรือ อยุธยา</p>
             </div>
             
+            <!--แถบเลือกฟีเจอร์-->
             <nav class="flex-1 px-4 space-y-2 mt-4 overflow-y-auto">
                 <a class="flex items-center gap-4 px-4 py-4 rounded-2xl text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all group" href="order_list.html">
                     <span class="material-symbols-outlined group-hover:text-primary transition-colors">list_alt</span>
@@ -92,6 +96,7 @@
                 </a>
             </nav>
             
+            <!--พนักงาน + ออกจากระบบ-->
             <div class="p-4 border-t border-slate-100 dark:border-slate-800 mt-auto">
                 <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800 flex items-center gap-4 mb-4">
                     <div class="w-10 h-10 rounded-xl bg-primary/20 flex items-center justify-center text-primary">
@@ -109,13 +114,17 @@
             </div>
         </aside>
 
+        <!--หน้าหลัก-->
         <main class="flex-1 flex flex-col overflow-y-auto relative z-10 p-6 lg:p-10 pb-20">
             
+            <!--ส่วนหัว-->
             <header class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
                 <div class="flex items-start gap-4 w-full md:w-auto">
+                    <!--ปุ่มแสดงแถบด้านข้าง (กรณีจอมือถือ)-->
                     <button id="mobile-menu-btn" class="md:hidden flex items-center justify-center p-2 mt-1 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl shadow-sm hover:bg-slate-50 transition-colors">
                         <span class="material-symbols-outlined text-2xl text-slate-700 dark:text-slate-200">menu</span>
                     </button>
+                    <!--ป้ายแสดงชื่อฟีเจอร์ปัจจุบัน-->
                     <div>
                         <h1 class="text-4xl font-black text-slate-900 dark:text-white tracking-tight">จัดการรายการ</h1>
                         <p class="text-slate-500 dark:text-slate-400 mt-1 font-medium flex items-center gap-2">
@@ -130,7 +139,7 @@
             </header>
 
             <div class="space-y-10">
-                
+                <!--ประเภทเส้น-->
                 <section>
                     <div class="flex items-center gap-3 mb-5 border-b border-slate-200 dark:border-slate-800 pb-3">
                         <span class="material-symbols-outlined text-primary text-3xl">ramen_dining</span>
@@ -193,7 +202,8 @@
 
                     </div>
                 </section>
-
+                
+                <!--ประเภทเครื่องเคียง-->
                 <section>
                     <div class="flex items-center gap-3 mb-5 border-b border-slate-200 dark:border-slate-800 pb-3 mt-10">
                         <span class="material-symbols-outlined text-primary text-3xl">tapas</span>
@@ -309,6 +319,7 @@
                     </div>
                 </section>
 
+                <!--ประเภทเครื่องดื่ม-->
                 <section>
                     <div class="flex items-center gap-3 mb-5 border-b border-slate-200 dark:border-slate-800 pb-3 mt-10">
                         <span class="material-symbols-outlined text-primary text-3xl">local_drink</span>
@@ -356,7 +367,8 @@
         const closeSidebarBtn = document.getElementById('close-sidebar-btn');
         const sidebar = document.getElementById('sidebar');
         const overlay = document.getElementById('sidebar-overlay');
-
+        
+        // เปิด/ปิด แถบด้านข้าง
         function toggleSidebar() {
             sidebar.classList.toggle('-translate-x-full');
             overlay.classList.toggle('hidden');
