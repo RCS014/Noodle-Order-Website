@@ -151,96 +151,96 @@
         overlay.addEventListener('click', toggleSidebar);
 
         function getOrders(){
-return JSON.parse(localStorage.getItem("orderHistory")) || [];
-}
+    return JSON.parse(localStorage.getItem("orderHistory")) || [];
+    }
 
-function saveOrders(data){
-localStorage.setItem("orderHistory", JSON.stringify(data));
-}
+    function saveOrders(data){
+    localStorage.setItem("orderHistory", JSON.stringify(data));
+    }
 
-function groupByTable(orders){
-let grouped={};
-orders.forEach(o=>{
-if(!grouped[o.table]) grouped[o.table]=[];
-grouped[o.table].push(o);
-});
-return grouped;
-}
+    function groupByTable(orders){
+    let grouped={};
+    orders.forEach(o=>{
+    if(!grouped[o.table]) grouped[o.table]=[];
+    grouped[o.table].push(o);
+    });
+    return grouped;
+    }
 
-function renderAdmin(){
-let container=document.getElementById("orderContainer");
-container.innerHTML="";
+    function renderAdmin(){
+    let container=document.getElementById("orderContainer");
+    container.innerHTML="";
 
-let orders=getOrders();
+    let orders=getOrders();
 
-if(orders.length===0){
-container.innerHTML="<div class='justify-center text-center text-gray-500'>ไม่มีออเดอร์</div>";
-return;
-}
+    if(orders.length===0){
+    container.innerHTML="<div class='justify-center text-center text-gray-500'>ไม่มีออเดอร์</div>";
+    return;
+    }
 
-let grouped=groupByTable(orders);
+    let grouped=groupByTable(orders);
 
-for(let table in grouped){
+    for(let table in grouped){
 
-let tableBox=document.createElement("div");
-tableBox.className="bg-white p-4 rounded-xl shadow-lg";
+    let tableBox=document.createElement("div");
+    tableBox.className="bg-white p-4 rounded-xl shadow-lg";
 
-let itemsHTML="";
-grouped[table].forEach((item,index)=>{
-itemsHTML+=`
-<div class="border p-5 rounded mb-2">
-${item.name} x ${item.qty}<br>
-${item.spicy ? "🌶 "+item.spicy+"<br>" : ""}
-สถานะ: <span class="font-semibold">${item.status}</span>
-</div>`;
-});
+    let itemsHTML="";
+    grouped[table].forEach((item,index)=>{
+    itemsHTML+=`
+    <div class="border p-5 rounded mb-2">
+    ${item.name} x ${item.qty}<br>
+    ${item.spicy ? "🌶 "+item.spicy+"<br>" : ""}
+    สถานะ: <span class="font-semibold">${item.status}</span>
+    </div>`;
+    });
 
-tableBox.innerHTML=`
-<h2 class="font-bold text-lg text-orange-600 mb-3">โต๊ะ ${table}</h2>
+    tableBox.innerHTML=`
+    <h2 class="font-bold text-lg text-orange-600 mb-3">โต๊ะ ${table}</h2>
 
-${itemsHTML}
+    ${itemsHTML}
 
-<div class="flex gap-2 mt-3">
-<button onclick="markReady('${table}')"
-class="flex-1 bg-green-500 hover:bg-green-600 text-white p-2 rounded">
-ทำเสร็จแล้ว
-</button>
+    <div class="flex gap-2 mt-3">
+    <button onclick="markReady('${table}')"
+    class="flex-1 bg-green-500 hover:bg-green-600 text-white p-2 rounded">
+    ทำเสร็จแล้ว
+    </button>
 
-<button onclick="deleteTable('${table}')"
-class="flex-1 bg-red-500 hover:bg-red-600 text-white p-2 rounded">
-ลบออเดอร์โต๊ะนี้
-</button>
-</div>
-`;
+    <button onclick="deleteTable('${table}')"
+    class="flex-1 bg-red-500 hover:bg-red-600 text-white p-2 rounded">
+    ลบออเดอร์โต๊ะนี้
+    </button>
+    </div>
+    `;
 
-container.appendChild(tableBox);
-}
-}
+    container.appendChild(tableBox);
+    }
+    }
 
-function markReady(table){
-let orders=getOrders();
+    function markReady(table){
+    let orders=getOrders();
 
-orders.forEach(o=>{
-if(o.table===table){
-o.status="พร้อมเสิร์ฟ";
-}
-});
+    orders.forEach(o=>{
+    if(o.table===table){
+    o.status="พร้อมเสิร์ฟ";
+    }
+    });
 
-saveOrders(orders);
-renderAdmin();
-}
+    saveOrders(orders);
+    renderAdmin();
+    }
 
-function deleteTable(table){
-let orders=getOrders();
+    function deleteTable(table){
+    let orders=getOrders();
 
-orders=orders.filter(o=>o.table!==table);
+    orders=orders.filter(o=>o.table!==table);
 
-saveOrders(orders);
-renderAdmin();
-}
+    saveOrders(orders);
+    renderAdmin();
+    }
 
-renderAdmin();
-setInterval(renderAdmin,3000);
-    </script>
+    renderAdmin();
+    setInterval(renderAdmin,3000);
+        </script>
 </body>
 </html>
