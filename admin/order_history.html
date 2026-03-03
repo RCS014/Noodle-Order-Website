@@ -100,23 +100,81 @@
                 </div>
             </aside>
 
-            <main class="flex-1 flex flex-col overflow-y-auto relative z-10 p-6 lg:p-10">
+            <main class="flex-1 flex flex-col overflow-y-auto relative z-10 p-6 lg:p-10 pb-20">
                 <header class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
-                <div class="flex items-start gap-4 w-full md:w-auto">
-                    <button id="mobile-menu-btn" class="md:hidden flex items-center justify-center p-2 mt-1 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl shadow-sm hover:bg-slate-50 transition-colors">
-                        <span class="material-symbols-outlined text-2xl text-slate-700 dark:text-slate-200">menu</span>
-                    </button>
-                    <div>
-                        <h1 class="text-4xl font-black text-slate-900 dark:text-white tracking-tight">ประวัติการสั่ง</h1>
-                        <p class="text-slate-500 dark:text-slate-400 mt-1 font-medium flex items-center gap-2">
+                    <div class="flex items-start gap-4 w-full md:w-auto">
+                        <button id="mobile-menu-btn" class="md:hidden flex items-center justify-center p-2 mt-1 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl shadow-sm hover:bg-slate-50 transition-colors">
+                            <span class="material-symbols-outlined text-2xl text-slate-700 dark:text-slate-200">menu</span>
+                        </button>
+                        <div>
+                            <h1 class="text-4xl font-black text-slate-900 dark:text-white tracking-tight">ประวัติการสั่ง</h1>
+                            <p class="text-slate-500 dark:text-slate-400 mt-1 font-medium flex items-center gap-2">
                             <span class="relative flex h-3 w-3">
                                 <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
                                 <span class="relative inline-flex rounded-full h-3 w-3 bg-primary"></span>
                             </span>
-                            ประวัติการสั่งของลูกค้าในร้านทั้งหมด
-                        </p>
+                                ประวัติการสั่งของลูกค้าในร้านทั้งหมด
+                            </p>
+                        </div>
+                    </div>
+                </header>
+
+                <div class="w-full overflow-x-auto pb-4">
+                    <div class="min-w-[900px]">
+            
+                        <div class="bg-white dark:bg-slate-900 rounded-xl shadow-sm mb-4 p-4 px-8 grid grid-cols-12 gap-4 text-slate-500 dark:text-slate-400 font-medium text-center items-center">
+                            <div class="col-span-3 text-left">เวลาสั่ง</div>
+                            <div class="col-span-1">โต๊ะที่</div>
+                            <div class="col-span-4">เมนู</div>
+                            <div class="col-span-2">ราคา</div>
+                            <div class="col-span-2">สถานะการเสิร์ฟ</div>
+                        </div>
+
+                        <div class="space-y-4">
+                
+                            <div class="bg-white dark:bg-slate-900 rounded-xl shadow-sm p-6 px-8 grid grid-cols-12 gap-4 items-center text-center hover:shadow-md transition-shadow">
+                                <div class="col-span-3 text-left text-slate-700 dark:text-slate-300 font-medium">1 ก.พ 69 , 13:12</div>
+                                <div class="col-span-1 text-slate-700 dark:text-slate-300 font-medium">1</div>
+                                <div class="col-span-4 flex justify-center">
+                                    <div class="flex flex-col gap-2 text-left w-full max-w-[200px]">
+                                        <div class="flex gap-4">
+                                            <span class="font-black text-slate-900 dark:text-white w-6">x1</span>
+                                            <span class="text-slate-600 dark:text-slate-300">เส้นเล็กน้ำตก พิเศษ</span>
+                                        </div>
+                                        <div class="flex gap-4">
+                                            <span class="font-black text-slate-900 dark:text-white w-6">x1</span>
+                                            <span class="text-slate-600 dark:text-slate-300">บะหมี่น้ำใส ธรรมดา</span>
+                                        </div>
+                                        <div class="flex gap-4">
+                                            <span class="font-black text-slate-900 dark:text-white w-6">x1</span>
+                                            <span class="text-slate-600 dark:text-slate-300">กากหมู</span>
+                                        </div>
+                                        <div class="flex gap-4">
+                                            <span class="font-black text-slate-900 dark:text-white w-6">x1</span>
+                                            <span class="text-slate-600 dark:text-slate-300">แคปหมู</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-span-2 text-slate-700 dark:text-slate-300 font-medium">180.-</div>
+                                <div class="col-span-2 font-bold text-red-500">ยังไม่ได้เสิร์ฟ</div>
+                            </div>
+
+                        </div>
                     </div>
                 </div>
+
+            <div class="flex justify-center items-center gap-3 mt-8">
+                <button class="w-12 h-12 flex items-center justify-center bg-primary text-white font-black text-lg rounded-xl shadow-lg shadow-primary/30 transition-transform active:scale-95">
+                    1
+                </button>
+                <button class="w-12 h-12 flex items-center justify-center bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 font-bold text-lg rounded-xl shadow-sm hover:shadow-md hover:bg-slate-50 dark:hover:bg-slate-800 transition-all active:scale-95">
+                    2
+                </button>
+                <button class="w-12 h-12 flex items-center justify-center bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 font-bold text-lg rounded-xl shadow-sm hover:shadow-md hover:bg-slate-50 dark:hover:bg-slate-800 transition-all active:scale-95">
+                    3
+                </button>
+            </div>
+
             </main>
 
     </div>
