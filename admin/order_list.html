@@ -190,9 +190,6 @@
 
             let orders=getOrders();
 
-            // กรองเอามาแสดงเฉพาะเมนูที่ "กำลังทำ" หรือ "พร้อมเสิร์ฟ" เท่านั้น
-            let activeOrders = orders.filter(o => o.status === "กำลังทำ" || o.status === "พร้อมเสิร์ฟ");
-
             if(orders.length===0){
                 container.innerHTML="<div class='col-span-full flex justify-center text-center text-gray-500 font-bold text-lg mt-10'>ไม่มีออเดอร์ในขณะนี้</div>";
                 return;
@@ -253,7 +250,7 @@
                     </button>
 
                     <button onclick="deleteTable('${table}')"
-                    class="flex-none bg-rose-100 hover:bg-rose-200 text-rose-600 font-bold px-4 rounded-xl transition-all active:scale-95 flex items-center justify-center" title="ลบออเดอร์โต๊ะนี้">
+                    class="flex-none bg-rose-100 hover:bg-rose-200 text-rose-600 font-bold px-4 rounded-xl transition-all active:scale-95 flex items-center justify-center" title="ลบออเดอร์">
                         <span class="material-symbols-outlined">delete</span>
                     </button>
                 </div>
