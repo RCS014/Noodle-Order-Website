@@ -3,181 +3,87 @@
 <head>
     <meta charset="utf-8"/>
     <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-    <title>คิวสั่งอาหาร</title>
-    <script src="noodle-script.js"></script>
+    <title>ประวัติการสั่งอาหาร</title>
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
     <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700;900&display=swap" rel="stylesheet"/>
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&display=swap" rel="stylesheet"/>
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;600;700&display=swap" rel="stylesheet">
-
     <script id="tailwind-config">
-        tailwind.config = {
-            darkMode: "class",
-            theme: {
-                extend: {
-                    colors: {
-                        "primary": "#ec5b13",
-                        "background-light": "#f8f6f6",
-                        "background-dark": "#221610",
-                    },
-                    fontFamily: {
-                        "display": ["Public Sans", "Sarabun", "sans-serif"]
-                    },
-                    borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" },
-                },
-            },
-        }
+        tailwind.config = { darkMode: "class", theme: { extend: { colors: { "primary": "#ec5b13", "background-light": "#f8f6f6", "background-dark": "#221610" }, fontFamily: { "display": ["Public Sans", "Sarabun", "sans-serif"] }, borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" } } } }
     </script>
-    
     <style>
-        main, aside {
-            font-family: 'Kanit';
-        }
-        .noodle-pattern {
-            background-color: #f8f6f6;
-            background-image: radial-gradient(#ec5b13 0.5px, transparent 0.5px), radial-gradient(#ec5b13 0.5px, #f8f6f6 0.5px);
-            background-size: 20px 20px;
-            background-position: 0 0, 10px 10px;
-            opacity: 0.05;
-        }
-        .dark .noodle-pattern {
-            background-color: #221610;
-            background-image: radial-gradient(#ec5b13 0.5px, transparent 0.5px), radial-gradient(#ec5b13 0.5px, #221610 0.5px);
-            opacity: 0.1;
-        }
+        main, aside { font-family: 'Kanit'; }
+        .noodle-pattern { background-color: #f8f6f6; background-image: radial-gradient(#ec5b13 0.5px, transparent 0.5px), radial-gradient(#ec5b13 0.5px, #f8f6f6 0.5px); background-size: 20px 20px; background-position: 0 0, 10px 10px; opacity: 0.05; }
     </style>
 </head>
 <body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 font-display transition-colors duration-200">
     <div class="flex h-screen overflow-hidden relative">
         <div class="absolute inset-0 noodle-pattern pointer-events-none"></div>
-            <aside id="sidebar" class="w-80 bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 flex flex-col fixed inset-y-0 left-0 z-50 transform -translate-x-full transition-transform duration-300 md:relative md:translate-x-0 shadow-2xl md:shadow-none">
-            
-                <button id="close-sidebar-btn" class="absolute top-4 left-5 md:hidden p-2 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition-colors">
-                    <span class="material-symbols-outlined">close</span>
-                </button>
+        <div id="sidebar-overlay" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-40 hidden md:hidden transition-opacity"></div>
 
-                <div class="p-8 flex flex-col items-center text-center mt-4 md:mt-0">
-                    <div class="w-24 h-24 rounded-full bg-primary/10 flex items-center justify-center p-2 mb-4 ring-4 ring-primary/5">
-                        <div class="w-full h-full rounded-full bg-cover bg-center shadow-inner" data-alt="Logo for boat noodle shop P Prateep" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBQ5TQYrIKsPSEfUMXYfYUcd0a-MIaV2R7GVudVQAQAelUyzxZPYY_5yl0CGPhtiRM480QSGfTiaSeQ1c3omiDjc67jZL7aw7semk6SZKOX1HbELLGjZSOIT96x2zvELMgNLi2VEh7aAc4DMI1QwsHJGslkyV-oQ89r5EFkXcJpsUCaMY4tTWPjInEk7l346caUyI_qpdJ9m5Mm04BsXbfi2ZkPssFwT9QLyN_DXZWdShw6kbwaZ-Nvo6SBBWA1E0bDOQepnghQQ_5U');"></div>
-                    </div>
-                    <h2 class="text-xl font-black text-slate-900 dark:text-white">ป. ประทีป</h2>
-                    <p class="text-primary font-bold text-sm tracking-wide">ก๋วยเตี๋ยวเรือ อยุธยา</p>
+        <aside id="sidebar" class="w-80 bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 flex flex-col fixed inset-y-0 left-0 z-50 transform -translate-x-full transition-transform duration-300 md:relative md:translate-x-0 shadow-2xl md:shadow-none">
+            <button id="close-sidebar-btn" class="absolute top-4 left-5 md:hidden p-2 text-slate-400 hover:text-slate-700 transition-colors"><span class="material-symbols-outlined">close</span></button>
+            <div class="p-8 flex flex-col items-center text-center mt-4 md:mt-0">
+                <div class="w-24 h-24 rounded-full bg-primary/10 flex items-center justify-center p-2 mb-4 ring-4 ring-primary/5">
+                    <div class="w-full h-full rounded-full bg-cover bg-center shadow-inner" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBQ5TQYrIKsPSEfUMXYfYUcd0a-MIaV2R7GVudVQAQAelUyzxZPYY_5yl0CGPhtiRM480QSGfTiaSeQ1c3omiDjc67jZL7aw7semk6SZKOX1HbELLGjZSOIT96x2zvELMgNLi2VEh7aAc4DMI1QwsHJGslkyV-oQ89r5EFkXcJpsUCaMY4tTWPjInEk7l346caUyI_qpdJ9m5Mm04BsXbfi2ZkPssFwT9QLyN_DXZWdShw6kbwaZ-Nvo6SBBWA1E0bDOQepnghQQ_5U');"></div>
                 </div>
-            
-                <nav class="flex-1 px-4 space-y-2 mt-4 overflow-y-auto">
-                    <a class="flex items-center gap-4 px-4 py-4 rounded-2xl text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all group" href="order_list.html">
-                        <span class="material-symbols-outlined filled">list_alt</span>
-                        <span class="font-bold">ออเดอร์ (Orders)</span>
-                    </a>
-                    <a class="flex items-center gap-4 px-4 py-4 rounded-2xl text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all group" href="order_manage.html">
-                        <span class="material-symbols-outlined group-hover:text-primary transition-colors">restaurant_menu</span>
-                        <span class="font-bold group-hover:text-slate-900 dark:group-hover:text-white transition-colors">จัดการเมนู (Manage Menu)</span>
-                    </a>
-                    <a class="flex items-center gap-4 px-4 py-4 rounded-2xl bg-primary text-white shadow-lg shadow-primary/25 transition-all" href="#">
-                        <span class="material-symbols-outlined group-hover:text-primary transition-colors">history</span>
-                        <span class="font-bold group-hover:text-slate-900 dark:group-hover:text-white transition-colors">ประวัติการขาย (History)</span>
-                    </a>
-                    <a class="flex items-center gap-4 px-4 py-4 rounded-2xl text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all group" href="#">
-                        <span class="material-symbols-outlined group-hover:text-primary transition-colors">settings</span>
-                        <span class="font-bold group-hover:text-slate-900 dark:group-hover:text-white transition-colors">การตั้งค่า (Settings)</span>
-                    </a>
-                </nav>
-            
-                <div class="p-4 border-t border-slate-100 dark:border-slate-800 mt-auto">
-                    <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800 flex items-center gap-4 mb-4">
-                        <div class="w-10 h-10 rounded-xl bg-primary/20 flex items-center justify-center text-primary">
-                            <span class="material-symbols-outlined">person</span>
-                        </div>
-                        <div class="flex-1 min-w-0">
-                            <p class="text-sm font-bold truncate">พนักงาน A</p>
-                            <p class="text-[10px] text-slate-400 font-medium">กะกลางวัน</p>
-                        </div>
-                    </div>
-                    <button class="w-full flex items-center justify-center gap-3 py-4 text-rose-500 font-bold hover:bg-rose-50 dark:hover:bg-rose-900/20 rounded-2xl transition-all">
-                        <span class="material-symbols-outlined">logout</span>
-                        <span>ออกจากระบบ (Sign Out)</span>
-                    </button>
+                <h2 class="text-xl font-black text-slate-900 dark:text-white">ป. ประทีป</h2>
+                <p class="text-primary font-bold text-sm tracking-wide">ก๋วยเตี๋ยวเรือ อยุธยา</p>
+            </div>
+            <nav class="flex-1 px-4 space-y-2 mt-4 overflow-y-auto">
+                <a class="flex items-center gap-4 px-4 py-4 rounded-2xl text-slate-500 hover:bg-slate-50 transition-all group" href="order_list.html">
+                    <span class="material-symbols-outlined group-hover:text-primary transition-colors">list_alt</span><span class="font-bold group-hover:text-slate-900 transition-colors">ออเดอร์ (Orders)</span>
+                </a>
+                <a class="flex items-center gap-4 px-4 py-4 rounded-2xl text-slate-500 hover:bg-slate-50 transition-all group" href="order_manage.html">
+                    <span class="material-symbols-outlined group-hover:text-primary transition-colors">restaurant_menu</span><span class="font-bold group-hover:text-slate-900 transition-colors">จัดการเมนู (Manage Menu)</span>
+                </a>
+                <a class="flex items-center gap-4 px-4 py-4 rounded-2xl bg-primary text-white shadow-lg shadow-primary/25 transition-all" href="#">
+                    <span class="material-symbols-outlined filled">history</span><span class="font-bold">ประวัติการขาย (History)</span>
+                </a>
+                <a class="flex items-center gap-4 px-4 py-4 rounded-2xl text-slate-500 hover:bg-slate-50 transition-all group" href="#">
+                    <span class="material-symbols-outlined group-hover:text-primary transition-colors">settings</span><span class="font-bold group-hover:text-slate-900 transition-colors">การตั้งค่า (Settings)</span>
+                </a>
+            </nav>
+            <div class="p-4 border-t border-slate-100 mt-auto">
+                <div class="p-4 rounded-2xl bg-slate-50 flex items-center gap-4 mb-4">
+                    <div class="w-10 h-10 rounded-xl bg-primary/20 flex items-center justify-center text-primary"><span class="material-symbols-outlined">person</span></div>
+                    <div class="flex-1 min-w-0"><p class="text-sm font-bold truncate">พนักงาน A</p><p class="text-[10px] text-slate-400 font-medium">กะกลางวัน</p></div>
                 </div>
-            </aside>
+                <button class="w-full flex items-center justify-center gap-3 py-4 text-rose-500 font-bold hover:bg-rose-50 rounded-2xl transition-all"><span class="material-symbols-outlined">logout</span><span>ออกจากระบบ (Sign Out)</span></button>
+            </div>
+        </aside>
 
-            <main class="flex-1 flex flex-col overflow-y-auto relative z-10 p-6 lg:p-10 pb-20">
-                <header class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
-                    <div class="flex items-start gap-4 w-full md:w-auto">
-                        <button id="mobile-menu-btn" class="md:hidden flex items-center justify-center p-2 mt-1 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl shadow-sm hover:bg-slate-50 transition-colors">
-                            <span class="material-symbols-outlined text-2xl text-slate-700 dark:text-slate-200">menu</span>
-                        </button>
-                        <div>
-                            <h1 class="text-4xl font-black text-slate-900 dark:text-white tracking-tight">ประวัติการสั่ง</h1>
-                            <p class="text-slate-500 dark:text-slate-400 mt-1 font-medium flex items-center gap-2">
-                            <span class="relative flex h-3 w-3">
-                                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
-                                <span class="relative inline-flex rounded-full h-3 w-3 bg-primary"></span>
-                            </span>
-                                ประวัติการสั่งของลูกค้าในร้านทั้งหมด
-                            </p>
-                        </div>
-                    </div>
-                </header>
-
-                <div class="w-full overflow-x-auto pb-4">
-                    <div class="min-w-[900px]">
-            
-                        <div class="bg-white dark:bg-slate-900 rounded-xl shadow-sm mb-4 p-4 px-8 grid grid-cols-12 gap-4 text-slate-500 dark:text-slate-400 font-medium text-center items-center">
-                            <div class="col-span-3 text-left">เวลาสั่ง</div>
-                            <div class="col-span-1">โต๊ะที่</div>
-                            <div class="col-span-4">เมนู</div>
-                            <div class="col-span-2">ราคา</div>
-                            <div class="col-span-2">สถานะการเสิร์ฟ</div>
-                        </div>
-
-                        <div class="space-y-4">
-                
-                            <div class="bg-white dark:bg-slate-900 rounded-xl shadow-sm p-6 px-8 grid grid-cols-12 gap-4 items-center text-center hover:shadow-md transition-shadow">
-                                <div class="col-span-3 text-left text-slate-700 dark:text-slate-300 font-medium">1 ก.พ 69 , 13:12</div>
-                                <div class="col-span-1 text-slate-700 dark:text-slate-300 font-medium">1</div>
-                                <div class="col-span-4 flex justify-center">
-                                    <div class="flex flex-col gap-2 text-left w-full max-w-[200px]">
-                                        <div class="flex gap-4">
-                                            <span class="font-black text-slate-900 dark:text-white w-6">x1</span>
-                                            <span class="text-slate-600 dark:text-slate-300">เส้นเล็กน้ำตก พิเศษ</span>
-                                        </div>
-                                        <div class="flex gap-4">
-                                            <span class="font-black text-slate-900 dark:text-white w-6">x1</span>
-                                            <span class="text-slate-600 dark:text-slate-300">บะหมี่น้ำใส ธรรมดา</span>
-                                        </div>
-                                        <div class="flex gap-4">
-                                            <span class="font-black text-slate-900 dark:text-white w-6">x1</span>
-                                            <span class="text-slate-600 dark:text-slate-300">กากหมู</span>
-                                        </div>
-                                        <div class="flex gap-4">
-                                            <span class="font-black text-slate-900 dark:text-white w-6">x1</span>
-                                            <span class="text-slate-600 dark:text-slate-300">แคปหมู</span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-span-2 text-slate-700 dark:text-slate-300 font-medium">180.-</div>
-                                <div class="col-span-2 font-bold text-red-500">ยังไม่ได้เสิร์ฟ</div>
-                            </div>
-
-                        </div>
+        <main class="flex-1 flex flex-col overflow-y-auto relative z-10 p-6 lg:p-10 pb-20">
+            <header class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
+                <div class="flex items-start gap-4 w-full md:w-auto">
+                    <button id="mobile-menu-btn" class="md:hidden flex items-center justify-center p-2 mt-1 bg-white border rounded-xl shadow-sm"><span class="material-symbols-outlined text-2xl text-slate-700">menu</span></button>
+                    <div>
+                        <h1 class="text-4xl font-black text-slate-900 tracking-tight">ประวัติการสั่ง</h1>
+                        <p class="text-slate-500 mt-1 font-medium flex items-center gap-2">
+                            <span class="material-symbols-outlined text-primary text-lg">history</span>
+                            <span id="time-label">แสดงประวัติย้อนหลัง 1 ชั่วโมง</span>
+                        </p>
                     </div>
                 </div>
+            </header>
 
-            <div class="flex justify-center items-center gap-3 mt-8">
-                <button class="w-12 h-12 flex items-center justify-center bg-primary text-white font-black text-lg rounded-xl shadow-lg shadow-primary/30 transition-transform active:scale-95">
-                    1
-                </button>
-                <button class="w-12 h-12 flex items-center justify-center bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 font-bold text-lg rounded-xl shadow-sm hover:shadow-md hover:bg-slate-50 dark:hover:bg-slate-800 transition-all active:scale-95">
-                    2
-                </button>
-                <button class="w-12 h-12 flex items-center justify-center bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 font-bold text-lg rounded-xl shadow-sm hover:shadow-md hover:bg-slate-50 dark:hover:bg-slate-800 transition-all active:scale-95">
-                    3
-                </button>
+            <div class="w-full overflow-x-auto pb-4">
+                <div class="min-w-[900px]">
+                    <div class="bg-white rounded-xl shadow-sm mb-4 p-4 px-8 grid grid-cols-12 gap-4 text-slate-500 font-medium text-center items-center">
+                        <div class="col-span-3 text-left">เวลาสั่ง</div>
+                        <div class="col-span-1">โต๊ะที่</div>
+                        <div class="col-span-4">เมนู</div>
+                        <div class="col-span-2">ราคารวม</div>
+                        <div class="col-span-2">สถานะ</div>
+                    </div>
+                    
+                    <div class="space-y-4" id="historyContainer"></div>
+                </div>
             </div>
 
-            </main>
-
+            <div id="pagination-container" class="flex justify-center items-center gap-3 mt-8"></div>
+        </main>
     </div>
 
     <script>
@@ -185,80 +91,64 @@
         const closeSidebarBtn = document.getElementById('close-sidebar-btn');
         const sidebar = document.getElementById('sidebar');
         const overlay = document.getElementById('sidebar-overlay');
-
-        function toggleSidebar() {
-            sidebar.classList.toggle('-translate-x-full');
-            overlay.classList.toggle('hidden');
-        }
-        mobileMenuBtn.addEventListener('click', toggleSidebar);
-        closeSidebarBtn.addEventListener('click', toggleSidebar);
-        overlay.addEventListener('click', toggleSidebar);
-
+        function toggleSidebar() { sidebar.classList.toggle('-translate-x-full'); overlay.classList.toggle('hidden'); }
+        mobileMenuBtn.addEventListener('click', toggleSidebar); closeSidebarBtn.addEventListener('click', toggleSidebar); overlay.addEventListener('click', toggleSidebar);
 
         // ==========================================
-        // ระบบประวัติ แบ่งหน้า และ อัปเดตแบบ Real-time
+        // ระบบประวัติ ลบอัตโนมัติ 1 ชม. และ แบ่งหน้า
         // ==========================================
 
-        const itemsPerPage = 5; // จำนวนบิลที่จะโชว์ใน 1 หน้า
+        const itemsPerPage = 10; 
         let currentPage = 1;
         let allGroupedOrders = [];
-        let lastOrdersData = ""; // ตัวแปรเก็บข้อมูลเก่าเพื่อเช็คว่ามีออเดอร์ใหม่เข้ามาไหม
 
-        // ฟังก์ชันแปลง Date.now() เป็น วัน เดือน ปี เวลา (แบบไทย)
-        function formatThaiDate(timestamp) {
-            if (!timestamp) return "-";
-            const date = new Date(timestamp);
-            const months = ["ม.ค.", "ก.พ.", "มี.ค.", "เม.ย.", "พ.ค.", "มิ.ย.", "ก.ค.", "ส.ค.", "ก.ย.", "ต.ค.", "พ.ย.", "ธ.ค."];
-            
-            const day = date.getDate();
-            const month = months[date.getMonth()];
-            const year = (date.getFullYear() + 543).toString().slice(-2);
-            const hours = String(date.getHours()).padStart(2, '0');
-            const mins = String(date.getMinutes()).padStart(2, '0');
-            
-            return `${day} ${month} ${year} , ${hours}:${mins}`;
-        }
-
-        // ดึงและจัดกลุ่มข้อมูลจาก LocalStorage
-        function loadOrderHistory() {
+        function renderHistory() {
             let orders = JSON.parse(localStorage.getItem("orderHistory")) || [];
+            const ONE_HOUR = 60 * 60 * 1000;
+            const now = Date.now();
+
+            // 1. คัดกรองเก็บเฉพาะข้อมูลที่อายุ "ไม่เกิน 1 ชั่วโมง"
+            let validOrders = orders.filter(o => (now - o.queue) <= ONE_HOUR);
             
+            // ถ้ามีการลบข้อมูลเก่าทิ้งไป ให้เซฟทับ LocalStorage ใหม่ทันที
+            if(validOrders.length !== orders.length) {
+                localStorage.setItem("orderHistory", JSON.stringify(validOrders));
+            }
+
+            // 2. อัปเดตป้ายกำกับเวลาด้านบน
+            let oneHourAgo = new Date(now - ONE_HOUR);
+            let timeText = `แสดงประวัติย้อนหลัง 1 ชั่วโมง (ตั้งแต่เวลา ${String(oneHourAgo.getHours()).padStart(2,'0')}:${String(oneHourAgo.getMinutes()).padStart(2,'0')} น.)`;
+            document.getElementById('time-label').innerText = timeText;
+
+            // 3. จัดกลุ่มออเดอร์ตามบิล (เวลาที่สั่งพร้อมกัน)
             let grouped = {};
-            orders.forEach(o => {
+            validOrders.forEach(o => {
                 let key = o.queue;
                 if (!grouped[key]) {
-                    // สร้างกลุ่มบิล (ตั้งค่าเริ่มต้นเป็น "เสิร์ฟแล้ว" ไว้ก่อน)
-                    grouped[key] = {
-                        timestamp: o.queue,
-                        table: o.table,
-                        status: "เสิร์ฟแล้ว", 
-                        total: 0,
-                        items: []
-                    };
+                    grouped[key] = { time: o.queue, table: o.table, status: "เสิร์ฟแล้ว", total: 0, items: [] };
                 }
                 grouped[key].items.push(o);
                 grouped[key].total += (o.price * o.qty);
                 
-                // *** ถ้ามีเมนูใดเมนูหนึ่งในบิลที่ยัง "กำลังทำ" ให้สถานะรวมของบิลคือ "ยังไม่ได้เสิร์ฟ" ทันที ***
-                if (o.status === "กำลังทำ") {
-                    grouped[key].status = "ยังไม่ได้เสิร์ฟ";
-                }
+                // ถ้ายกเลิกคิว ให้เป็นยกเลิก, ถ้ายังทำอยู่ ให้เป็นยังไม่ได้เสิร์ฟ
+                if (o.status === "ยกเลิก") grouped[key].status = "ยกเลิก";
+                else if (o.status === "กำลังทำ" && grouped[key].status !== "ยกเลิก") grouped[key].status = "ยังไม่ได้เสิร์ฟ";
             });
 
-            // แปลงเป็น Array แล้วเรียงจากเวลา ใหม่ล่าสุด -> เก่าที่สุด
-            allGroupedOrders = Object.values(grouped).sort((a, b) => b.timestamp - a.timestamp);
-            
+            // เรียงบิลจาก ใหม่สุด ไป เก่าสุด
+            allGroupedOrders = Object.values(grouped).sort((a, b) => b.time - a.time);
+
+            // โชว์ข้อมูลหน้าแรก และสร้างปุ่ม
             displayItems(currentPage);
             setupPagination();
         }
 
-        // วาดรายการบิลลงหน้าจอ
         function displayItems(page) {
-            let historyContainer = document.getElementById("historyContainer");
-            historyContainer.innerHTML = "";
+            let container = document.getElementById("historyContainer");
+            container.innerHTML = "";
 
             if (allGroupedOrders.length === 0) {
-                historyContainer.innerHTML = "<p class='text-center py-8 text-slate-500'>ไม่มีประวัติการสั่งอาหาร</p>";
+                container.innerHTML = "<p class='text-center py-8 text-slate-500'>ไม่มีประวัติการสั่งอาหารใน 1 ชั่วโมงที่ผ่านมา</p>";
                 return;
             }
 
@@ -267,38 +157,32 @@
             const itemsToShow = allGroupedOrders.slice(start, end);
 
             itemsToShow.forEach(order => {
-                let timeString = formatThaiDate(order.timestamp);
+                let dateObj = new Date(order.time);
+                let timeString = dateObj.toLocaleString('th-TH', { dateStyle: 'short', timeStyle: 'short' });
                 
-                // สร้าง HTML รายการเมนู
-                let itemsHTML = order.items.map(i => {
-                    let sizeStr = (i.sizeName && i.price > 20 && !i.name.includes("ลวก")) ? `(${i.sizeName})` : "";
-                    let spicyStr = i.spicy ? `(🌶 ${i.spicy})` : "";
-                    return `
-                    <div class="flex gap-4 mb-1 border-b border-slate-50 dark:border-slate-800 pb-1 last:border-0">
-                        <span class="font-black text-slate-900 dark:text-white w-6">x${i.qty}</span>
-                        <span class="text-slate-600 dark:text-slate-300 text-sm mt-0.5">
-                            ${i.name} <span class="text-xs text-slate-400">${sizeStr} ${spicyStr}</span>
-                        </span>
-                    </div>`;
-                }).join('');
+                let itemsHTML = order.items.map(i => `
+                    <div class="flex gap-4 border-b border-slate-100 pb-1 mb-1 last:border-0">
+                        <span class="font-black text-primary w-6 text-right">x${i.qty}</span>
+                        <span class="text-sm text-slate-600">${i.name} ${i.spicy ? '(🌶 '+i.spicy+')' : ''}</span>
+                    </div>
+                `).join('');
 
-                // จัดสีตามสถานะ 2 แบบ
-                let statusColor = order.status === "เสิร์ฟแล้ว" ? "text-amber-500" : "text-red-500";
+                let statusColor = "text-emerald-500"; // เสิร์ฟแล้ว (สีเขียว)
+                if (order.status === "ยังไม่ได้เสิร์ฟ") statusColor = "text-amber-500"; // สีส้ม
+                if (order.status === "ยกเลิก") statusColor = "text-rose-500"; // สีแดง
 
-                let html = `
-                <div class="bg-white dark:bg-slate-900 rounded-xl shadow-sm p-6 px-8 grid grid-cols-12 gap-4 items-center text-center hover:shadow-md transition-shadow border border-slate-100 dark:border-slate-800">
-                    <div class="col-span-3 text-left text-slate-700 dark:text-slate-300 font-medium text-sm">${timeString}</div>
-                    <div class="col-span-1 text-slate-700 dark:text-slate-300 font-black text-lg">${order.table}</div>
+                container.innerHTML += `
+                <div class="bg-white rounded-xl shadow-sm p-6 px-8 grid grid-cols-12 gap-4 items-center text-center border">
+                    <div class="col-span-3 text-left text-sm text-slate-600">${timeString}</div>
+                    <div class="col-span-1 font-bold text-lg">${order.table}</div>
                     <div class="col-span-4 flex justify-center">
-                        <div class="flex flex-col text-left w-full max-w-[250px] bg-slate-50 dark:bg-slate-800/50 p-3 rounded-lg">
+                        <div class="flex flex-col w-full max-w-[250px] bg-slate-50 p-3 rounded-lg text-left">
                             ${itemsHTML}
                         </div>
                     </div>
-                    <div class="col-span-2 text-slate-700 dark:text-slate-300 font-bold text-lg">${order.total}.-</div>
-                    <div class="col-span-2 font-black ${statusColor}">${order.status}</div>
+                    <div class="col-span-2 font-bold">${order.total}.-</div>
+                    <div class="col-span-2 font-bold ${statusColor}">${order.status}</div>
                 </div>`;
-                
-                historyContainer.innerHTML += html;
             });
         }
 
@@ -307,7 +191,7 @@
             const pageCount = Math.ceil(allGroupedOrders.length / itemsPerPage);
             paginationContainer.innerHTML = '';
 
-            if (pageCount <= 1) return;
+            if (pageCount <= 1) return; // ไม่สร้างปุ่มถ้ามีหน้าเดียว
 
             for (let i = 1; i <= pageCount; i++) {
                 const btn = document.createElement('button');
@@ -317,36 +201,24 @@
                 if (i === currentPage) {
                     btn.className += "bg-primary text-white font-black shadow-lg shadow-primary/30";
                 } else {
-                    btn.className += "bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 font-bold shadow-sm hover:shadow-md hover:bg-slate-50 dark:hover:bg-slate-800 border border-slate-100 dark:border-slate-700";
+                    btn.className += "bg-white text-slate-700 font-bold shadow-sm hover:bg-slate-50 border border-slate-200";
                 }
 
                 btn.addEventListener('click', function() {
                     currentPage = i;
                     displayItems(currentPage);
-                    setupPagination();
+                    setupPagination(); // วาดปุ่มใหม่เพื่อเปลี่ยนสี
                 });
                 paginationContainer.appendChild(btn);
             }
         }
 
-        // ==========================================
-        // ระบบอัปเดตหน้าจออัตโนมัติแบบไร้รอยต่อ (ไม่กระตุก)
-        // ==========================================
-        function checkForNewOrders() {
-            let currentData = localStorage.getItem("orderHistory") || "[]";
-            // ถ้าระบบตรวจพบว่าข้อมูลในฐานข้อมูลเปลี่ยนไป ค่อยทำการวาดหน้าจอใหม่
-            if (currentData !== lastOrdersData) {
-                lastOrdersData = currentData;
-                loadOrderHistory();
-            }
-        }
-
+        // รันฟังก์ชันตอนโหลดหน้าเว็บ
         window.onload = function() {
-            checkForNewOrders();
-            // สั่งให้รีเฟรชเช็คข้อมูลใหม่ทุกๆ 2 วินาที
-            setInterval(checkForNewOrders, 2000);
+            renderHistory();
+            // เช็คและลบข้อมูลอัตโนมัติทุกๆ 1 นาที (60000 ms)
+            setInterval(renderHistory, 60000); 
         };
-        
     </script>
 </body>
 </html>
