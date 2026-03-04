@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html class="light" lang="th">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>คิวสั่งอาหาร</title>
+    <script src="navbar-script.js"></script>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700;900&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;600;700&display=swap" rel="stylesheet">
+
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#ec5b13",
+                        "background-light": "#f8f6f6",
+                        "background-dark": "#221610",
+                    },
+                    fontFamily: {
+                        "display": ["Public Sans", "Sarabun", "sans-serif"]
+                    },
+                    borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" },
+                },
+            },
+        }
+    </script>
+    
+    <style>
+        main, aside {
+            font-family:'Kanit'
+        }
+        .noodle-pattern {
+            background-color: #f8f6f6;
+            background-image: radial-gradient(#ec5b13 0.5px, transparent 0.5px), radial-gradient(#ec5b13 0.5px, #f8f6f6 0.5px);
+            background-size: 20px 20px;
+            background-position: 0 0, 10px 10px;
+            opacity: 0.05;
+        }
+        .dark .noodle-pattern {
+            background-color: #221610;
+            background-image: radial-gradient(#ec5b13 0.5px, transparent 0.5px), radial-gradient(#ec5b13 0.5px, #221610 0.5px);
+            opacity: 0.1;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 font-display transition-colors duration-200">
+    <div class="flex h-screen overflow-hidden relative">
+        
+        <div class="absolute inset-0 noodle-pattern pointer-events-none"></div>
+        
+        <aside id="sidebar" class="w-80 bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 flex flex-col fixed inset-y-0 left-0 z-50 transform -translate-x-full transition-transform duration-300 md:relative md:translate-x-0 shadow-2xl md:shadow-none">
+            
+            <button id="close-sidebar-btn" class="absolute top-4 left-5 md:hidden p-2 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition-colors">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+
+            <div class="p-8 flex flex-col items-center text-center mt-4 md:mt-0">
+                <div class="w-24 h-24 rounded-full bg-primary/10 flex items-center justify-center p-2 mb-4 ring-4 ring-primary/5">
+                    <div class="w-full h-full rounded-full bg-cover bg-center shadow-inner" data-alt="Logo for boat noodle shop P Prateep" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBQ5TQYrIKsPSEfUMXYfYUcd0a-MIaV2R7GVudVQAQAelUyzxZPYY_5yl0CGPhtiRM480QSGfTiaSeQ1c3omiDjc67jZL7aw7semk6SZKOX1HbELLGjZSOIT96x2zvELMgNLi2VEh7aAc4DMI1QwsHJGslkyV-oQ89r5EFkXcJpsUCaMY4tTWPjInEk7l346caUyI_qpdJ9m5Mm04BsXbfi2ZkPssFwT9QLyN_DXZWdShw6kbwaZ-Nvo6SBBWA1E0bDOQepnghQQ_5U');"></div>
+                </div>
+                <h2 class="text-xl font-black text-slate-900 dark:text-white">ป. ประทีป</h2>
+                <p class="text-primary font-bold text-sm tracking-wide">ก๋วยเตี๋ยวเรือ อยุธยา</p>
+            </div>
+            
+            <nav class="flex-1 px-4 space-y-2 mt-4 overflow-y-auto">
+                <a class="flex items-center gap-4 px-4 py-4 rounded-2xl bg-primary text-white shadow-lg shadow-primary/25 transition-all" href="#">
+                    <span class="material-symbols-outlined filled">list_alt</span>
+                    <span class="font-bold">ออเดอร์ (Orders)</span>
+                </a>
+                <a class="flex items-center gap-4 px-4 py-4 rounded-2xl text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all group" href="order_manage.html">
+                    <span class="material-symbols-outlined group-hover:text-primary transition-colors">restaurant_menu</span>
+                    <span class="font-bold group-hover:text-slate-900 dark:group-hover:text-white transition-colors">จัดการเมนู (Manage Menu)</span>
+                </a>
+                <a class="flex items-center gap-4 px-4 py-4 rounded-2xl text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all group" href="order_history.html">
+                    <span class="material-symbols-outlined group-hover:text-primary transition-colors">history</span>
+                    <span class="font-bold group-hover:text-slate-900 dark:group-hover:text-white transition-colors">ประวัติการขาย (History)</span>
+                </a>
+                <a class="flex items-center gap-4 px-4 py-4 rounded-2xl text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all group" href="#">
+                    <span class="material-symbols-outlined group-hover:text-primary transition-colors">settings</span>
+                    <span class="font-bold group-hover:text-slate-900 dark:group-hover:text-white transition-colors">การตั้งค่า (Settings)</span>
+                </a>
+            </nav>
+            
+            <div class="p-4 border-t border-slate-100 dark:border-slate-800 mt-auto">
+                <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800 flex items-center gap-4 mb-4">
+                    <div class="w-10 h-10 rounded-xl bg-primary/20 flex items-center justify-center text-primary">
+                        <span class="material-symbols-outlined">person</span>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <p class="text-sm font-bold truncate">พนักงาน A</p>
+                        <p class="text-[10px] text-slate-400 font-medium">กะกลางวัน</p>
+                    </div>
+                </div>
+                <button class="w-full flex items-center justify-center gap-3 py-4 text-rose-500 font-bold hover:bg-rose-50 dark:hover:bg-rose-900/20 rounded-2xl transition-all">
+                    <span class="material-symbols-outlined">logout</span>
+                    <span>ออกจากระบบ (Sign Out)</span>
+                </button>
+            </div>
+        </aside>
+
+        <main class="flex-1 flex flex-col overflow-y-auto relative z-10 p-6 lg:p-10">
+            
+            <header class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
+                <div class="flex items-start gap-4 w-full md:w-auto">
+                    <button id="mobile-menu-btn" class="md:hidden flex items-center justify-center p-2 mt-1 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl shadow-sm hover:bg-slate-50 transition-colors">
+                        <span class="material-symbols-outlined text-2xl text-slate-700 dark:text-slate-200">menu</span>
+                    </button>
+                    <div>
+                        <h1 class="text-4xl font-black text-slate-900 dark:text-white tracking-tight">ออเดอร์ที่เข้ามา</h1>
+                        <p class="text-slate-500 dark:text-slate-400 mt-1 font-medium flex items-center gap-2">
+                            <span class="relative flex h-3 w-3">
+                                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
+                                <span class="relative inline-flex rounded-full h-3 w-3 bg-primary"></span>
+                            </span>
+                            จัดการคำสั่งซื้อแบบเรียลไทม์
+                        </p>
+                    </div>
+                </div>
+                
+            </header>
+            <div id="orderContainer" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+
+            </div>
+        </main>
+
+        <div id="sidebar-overlay" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-40 hidden md:hidden transition-opacity"></div>
+
+    </div>
+
+    <script>
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const closeSidebarBtn = document.getElementById('close-sidebar-btn');
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('sidebar-overlay');
+
+        function toggleSidebar() {
+            // สลับคลาส translate-x-full เพื่อเลื่อนเข้า/ออก
+            sidebar.classList.toggle('-translate-x-full');
+            // สลับการแสดงผล Overlay
+            overlay.classList.toggle('hidden');
+        }
+
+        // ผูก Event Click กับปุ่มและ Overlay
+        mobileMenuBtn.addEventListener('click', toggleSidebar);
+        closeSidebarBtn.addEventListener('click', toggleSidebar);
+        overlay.addEventListener('click', toggleSidebar);
+
+        // =====================================
+        // ฟังก์ชันแปลงเวลาเป็นรูปแบบไทย
+        // =====================================
+        function formatThaiDate(timestamp) {
+            if (!timestamp) return "-";
+            const date = new Date(timestamp);
+            const months = ["ม.ค.", "ก.พ.", "มี.ค.", "เม.ย.", "พ.ค.", "มิ.ย.", "ก.ค.", "ส.ค.", "ก.ย.", "ต.ค.", "พ.ย.", "ธ.ค."];
+            
+            const day = date.getDate();
+            const month = months[date.getMonth()];
+            const year = (date.getFullYear() + 543).toString().slice(-2); // เอา พ.ศ. 2 ตัวท้าย
+            const hours = String(date.getHours()).padStart(2, '0');
+            const mins = String(date.getMinutes()).padStart(2, '0');
+            
+            return `${day} ${month} ${year} , ${hours}:${mins}`;
+        }
+
+        function getOrders(){
+            return JSON.parse(localStorage.getItem("orderHistory")) || [];
+        }
+
+        function saveOrders(data){
+            localStorage.setItem("orderHistory", JSON.stringify(data));
+        }
+
+        function groupByTable(orders){
+            let grouped={};
+            orders.forEach(o=>{
+                if(!grouped[o.table]) grouped[o.table]=[];
+                grouped[o.table].push(o);
+            });
+            return grouped;
+        }
+
+        function renderAdmin(){
+            let container=document.getElementById("orderContainer");
+            container.innerHTML="";
+
+            let orders=getOrders();
+
+            if(orders.length===0){
+                container.innerHTML="<div class='col-span-full flex justify-center text-center text-gray-500 font-bold text-lg mt-10'>ไม่มีออเดอร์ในขณะนี้</div>";
+                return;
+            }
+
+            let grouped=groupByTable(orders);
+
+            for(let table in grouped){
+                let tableBox=document.createElement("div");
+                tableBox.className="bg-white dark:bg-slate-900 p-5 rounded-2xl shadow-lg border border-slate-100 dark:border-slate-800 flex flex-col h-full";
+
+                let itemsHTML="";
+                grouped[table].forEach((item,index)=>{
+                    // แปลงเวลาจาก queue (timestamp) มาเป็นข้อความ
+                    let timeString = formatThaiDate(item.queue);
+
+                    // ตรวจสอบว่ามีข้อมูล sizeName และ spicy ไหม ป้องกันการแสดงคำว่า undefined
+                    let sizeStr = item.sizeName ? `${item.sizeName}<br>` : "";
+                    let spicyStr = item.spicy ? `🌶 ${item.spicy}<br>` : "";
+                    
+                    // เปลี่ยนสีสถานะให้ดูง่ายขึ้น
+                    let statusColor = item.status === "พร้อมเสิร์ฟ" ? "text-emerald-500" : "text-rose-500";
+
+                    itemsHTML+=`
+                    <div class="border border-slate-100 dark:border-slate-700 p-4 rounded-xl mb-3 bg-slate-50 dark:bg-slate-800/50 relative">
+                        <div class="text-[11px] text-slate-400 dark:text-slate-500 mb-2 flex items-center gap-1 font-medium">
+                            <span class="material-symbols-outlined text-[13px]">schedule</span>
+                            สั่งเมื่อ: ${timeString}
+                        </div>
+
+                        <div class="text-slate-700 dark:text-slate-200">
+                            <span class="font-bold text-primary text-lg">${item.name}</span> 
+                            <span class="font-black text-slate-900 dark:text-white ml-1">x ${item.qty}</span><br>
+                            <span class="text-sm text-slate-500 dark:text-slate-400">
+                                ${sizeStr}
+                                ${spicyStr}
+                            </span>
+                            <div class="mt-2 text-sm border-t border-slate-200 dark:border-slate-700 pt-2">
+                                สถานะ: <span class="font-bold ${statusColor}">${item.status}</span>
+                            </div>
+                        </div>
+                    </div>`;
+                });
+
+                tableBox.innerHTML=`
+                <div class="flex justify-between items-center mb-4 pb-2 border-b border-slate-100 dark:border-slate-800">
+                    <h2 class="font-black text-2xl text-slate-900 dark:text-white">โต๊ะ <span class="text-primary">${table}</span></h2>
+                </div>
+
+                <div class="flex-grow">
+                    ${itemsHTML}
+                </div>
+
+                <div class="flex gap-3 mt-4 pt-2">
+                    <button onclick="markReady('${table}')"
+                    class="flex-1 bg-primary hover:bg-primary/90 shadow-lg shadow-primary/30 text-white font-bold py-3 rounded-xl transition-all active:scale-95">
+                        ทำเสร็จแล้ว
+                    </button>
+
+                    <button onclick="deleteTable('${table}')"
+                    class="flex-none bg-rose-100 hover:bg-rose-200 text-rose-600 font-bold px-4 rounded-xl transition-all active:scale-95 flex items-center justify-center" title="ลบออเดอร์">
+                        <span class="material-symbols-outlined">delete</span>
+                    </button>
+                </div>
+                `;
+
+                container.appendChild(tableBox);
+            }
+        }
+
+        function markReady(table){
+            let orders=getOrders();
+
+            orders.forEach(o=>{
+                if(o.table===table){
+                    o.status="พร้อมเสิร์ฟ";
+                }
+            });
+
+            saveOrders(orders);
+            renderAdmin();
+        }
+
+        function deleteTable(table){
+            // ยืนยันก่อนลบ ป้องกันการกดผิด
+            if(confirm(`คุณแน่ใจหรือไม่ว่าต้องการลบออเดอร์ของ โต๊ะ ${table} ?`)){
+                let orders=getOrders();
+                orders=orders.filter(o=>o.table!==table);
+                saveOrders(orders);
+                renderAdmin();
+            }
+        }
+
+        renderAdmin();
+        // รีเฟรชหน้าจออัตโนมัติทุกๆ 3 วินาที เพื่อเช็คออเดอร์ใหม่
+        setInterval(renderAdmin, 3000);
+    </script>
+</body>
+</html>
