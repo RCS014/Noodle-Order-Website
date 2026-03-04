@@ -375,12 +375,19 @@ function confirmOrder(){
         showToast("ยังไม่มีรายการ");
         return;
     }
+
+    // 👉 เพิ่มบรรทัดนี้: ให้ดึงประวัติ "ล่าสุด" จากระบบเสมอก่อนบันทึก
+    let latestHistory = JSON.parse(localStorage.getItem("orderHistory")) || [];
+
     let queueNumber = Date.now();
     cart.forEach(i=>{
         i.queue=queueNumber;
         i.status="กำลังทำ";
     });
-    orderHistory = orderHistory.concat(cart);
+
+    // เอาตะกร้าปัจจุบัน ไปต่อท้ายประวัติล่าสุด
+    latestHistory = latestHistory.concat(cart);
+
     localStorage.setItem("orderHistory",JSON.stringify(orderHistory));
     localStorage.setItem("currentTable",document.getElementById("table").value);
     localStorage.setItem("selectedStatusTable",document.getElementById("table").value);

@@ -187,16 +187,166 @@
         const overlay = document.getElementById('sidebar-overlay');
 
         function toggleSidebar() {
-            // สลับคลาส translate-x-full เพื่อเลื่อนเข้า/ออก
             sidebar.classList.toggle('-translate-x-full');
-            // สลับการแสดงผล Overlay
             overlay.classList.toggle('hidden');
         }
-
-        // ผูก Event Click กับปุ่มและ Overlay
         mobileMenuBtn.addEventListener('click', toggleSidebar);
         closeSidebarBtn.addEventListener('click', toggleSidebar);
         overlay.addEventListener('click', toggleSidebar);
+
+
+        // ==========================================
+        // ระบบประวัติ แบ่งหน้า และ อัปเดตแบบ Real-time
+        // ==========================================
+
+        const itemsPerPage = 5; // จำนวนบิลที่จะโชว์ใน 1 หน้า
+        let currentPage = 1;
+        let allGroupedOrders = [];
+        let lastOrdersData = ""; // ตัวแปรเก็บข้อมูลเก่าเพื่อเช็คว่ามีออเดอร์ใหม่เข้ามาไหม
+
+        // ฟังก์ชันแปลง Date.now() เป็น วัน เดือน ปี เวลา (แบบไทย)
+        function formatThaiDate(timestamp) {
+            if (!timestamp) return "-";
+            const date = new Date(timestamp);
+            const months = ["ม.ค.", "ก.พ.", "มี.ค.", "เม.ย.", "พ.ค.", "มิ.ย.", "ก.ค.", "ส.ค.", "ก.ย.", "ต.ค.", "พ.ย.", "ธ.ค."];
+            
+            const day = date.getDate();
+            const month = months[date.getMonth()];
+            const year = (date.getFullYear() + 543).toString().slice(-2);
+            const hours = String(date.getHours()).padStart(2, '0');
+            const mins = String(date.getMinutes()).padStart(2, '0');
+            
+            return `${day} ${month} ${year} , ${hours}:${mins}`;
+        }
+
+        // ดึงและจัดกลุ่มข้อมูลจาก LocalStorage
+        function loadOrderHistory() {
+            let orders = JSON.parse(localStorage.getItem("orderHistory")) || [];
+            
+            let grouped = {};
+            orders.forEach(o => {
+                let key = o.queue;
+                if (!grouped[key]) {
+                    // สร้างกลุ่มบิล (ตั้งค่าเริ่มต้นเป็น "เสิร์ฟแล้ว" ไว้ก่อน)
+                    grouped[key] = {
+                        timestamp: o.queue,
+                        table: o.table,
+                        status: "เสิร์ฟแล้ว", 
+                        total: 0,
+                        items: []
+                    };
+                }
+                grouped[key].items.push(o);
+                grouped[key].total += (o.price * o.qty);
+                
+                // *** ถ้ามีเมนูใดเมนูหนึ่งในบิลที่ยัง "กำลังทำ" ให้สถานะรวมของบิลคือ "ยังไม่ได้เสิร์ฟ" ทันที ***
+                if (o.status === "กำลังทำ") {
+                    grouped[key].status = "ยังไม่ได้เสิร์ฟ";
+                }
+            });
+
+            // แปลงเป็น Array แล้วเรียงจากเวลา ใหม่ล่าสุด -> เก่าที่สุด
+            allGroupedOrders = Object.values(grouped).sort((a, b) => b.timestamp - a.timestamp);
+            
+            displayItems(currentPage);
+            setupPagination();
+        }
+
+        // วาดรายการบิลลงหน้าจอ
+        function displayItems(page) {
+            let historyContainer = document.getElementById("historyContainer");
+            historyContainer.innerHTML = "";
+
+            if (allGroupedOrders.length === 0) {
+                historyContainer.innerHTML = "<p class='text-center py-8 text-slate-500'>ไม่มีประวัติการสั่งอาหาร</p>";
+                return;
+            }
+
+            const start = (page - 1) * itemsPerPage;
+            const end = start + itemsPerPage;
+            const itemsToShow = allGroupedOrders.slice(start, end);
+
+            itemsToShow.forEach(order => {
+                let timeString = formatThaiDate(order.timestamp);
+                
+                // สร้าง HTML รายการเมนู
+                let itemsHTML = order.items.map(i => {
+                    let sizeStr = (i.sizeName && i.price > 20 && !i.name.includes("ลวก")) ? `(${i.sizeName})` : "";
+                    let spicyStr = i.spicy ? `(🌶 ${i.spicy})` : "";
+                    return `
+                    <div class="flex gap-4 mb-1 border-b border-slate-50 dark:border-slate-800 pb-1 last:border-0">
+                        <span class="font-black text-slate-900 dark:text-white w-6">x${i.qty}</span>
+                        <span class="text-slate-600 dark:text-slate-300 text-sm mt-0.5">
+                            ${i.name} <span class="text-xs text-slate-400">${sizeStr} ${spicyStr}</span>
+                        </span>
+                    </div>`;
+                }).join('');
+
+                // จัดสีตามสถานะ 2 แบบ
+                let statusColor = order.status === "เสิร์ฟแล้ว" ? "text-amber-500" : "text-red-500";
+
+                let html = `
+                <div class="bg-white dark:bg-slate-900 rounded-xl shadow-sm p-6 px-8 grid grid-cols-12 gap-4 items-center text-center hover:shadow-md transition-shadow border border-slate-100 dark:border-slate-800">
+                    <div class="col-span-3 text-left text-slate-700 dark:text-slate-300 font-medium text-sm">${timeString}</div>
+                    <div class="col-span-1 text-slate-700 dark:text-slate-300 font-black text-lg">${order.table}</div>
+                    <div class="col-span-4 flex justify-center">
+                        <div class="flex flex-col text-left w-full max-w-[250px] bg-slate-50 dark:bg-slate-800/50 p-3 rounded-lg">
+                            ${itemsHTML}
+                        </div>
+                    </div>
+                    <div class="col-span-2 text-slate-700 dark:text-slate-300 font-bold text-lg">${order.total}.-</div>
+                    <div class="col-span-2 font-black ${statusColor}">${order.status}</div>
+                </div>`;
+                
+                historyContainer.innerHTML += html;
+            });
+        }
+
+        function setupPagination() {
+            const paginationContainer = document.getElementById('pagination-container');
+            const pageCount = Math.ceil(allGroupedOrders.length / itemsPerPage);
+            paginationContainer.innerHTML = '';
+
+            if (pageCount <= 1) return;
+
+            for (let i = 1; i <= pageCount; i++) {
+                const btn = document.createElement('button');
+                btn.innerText = i;
+                btn.className = "w-12 h-12 flex items-center justify-center text-lg rounded-xl transition-all active:scale-95 ";
+
+                if (i === currentPage) {
+                    btn.className += "bg-primary text-white font-black shadow-lg shadow-primary/30";
+                } else {
+                    btn.className += "bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 font-bold shadow-sm hover:shadow-md hover:bg-slate-50 dark:hover:bg-slate-800 border border-slate-100 dark:border-slate-700";
+                }
+
+                btn.addEventListener('click', function() {
+                    currentPage = i;
+                    displayItems(currentPage);
+                    setupPagination();
+                });
+                paginationContainer.appendChild(btn);
+            }
+        }
+
+        // ==========================================
+        // ระบบอัปเดตหน้าจออัตโนมัติแบบไร้รอยต่อ (ไม่กระตุก)
+        // ==========================================
+        function checkForNewOrders() {
+            let currentData = localStorage.getItem("orderHistory") || "[]";
+            // ถ้าระบบตรวจพบว่าข้อมูลในฐานข้อมูลเปลี่ยนไป ค่อยทำการวาดหน้าจอใหม่
+            if (currentData !== lastOrdersData) {
+                lastOrdersData = currentData;
+                loadOrderHistory();
+            }
+        }
+
+        window.onload = function() {
+            checkForNewOrders();
+            // สั่งให้รีเฟรชเช็คข้อมูลใหม่ทุกๆ 2 วินาที
+            setInterval(checkForNewOrders, 2000);
+        };
+        
     </script>
 </body>
 </html>
