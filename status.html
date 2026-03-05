@@ -66,7 +66,7 @@ class="w-full border rounded-lg p-2">
 
 <script>
 let table = localStorage.getItem("selectedStatusTable") || localStorage.getItem("currentTable");
-let orderHistory = JSON.parse(localStorage.getItem("orderHistory")) || [];
+let orderHistory = JSON.parse(localStorage.getItem("currentOrders")) || [];
 let notified=false;
 
 if(!table){
@@ -76,7 +76,7 @@ window.location.href="index.html";
 document.getElementById("showTable").innerText=table;
 
 function getMyOrders(){
-orderHistory = JSON.parse(localStorage.getItem("orderHistory")) || [];
+orderHistory = JSON.parse(localStorage.getItem("currentOrders")) || [];
 return orderHistory.filter(o=>o.table===table);
 }
 

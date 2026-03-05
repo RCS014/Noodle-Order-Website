@@ -203,23 +203,25 @@ function clearCart(){
 }
 
 function confirmOrder(){
+
     if(cart.length===0){
         showToast("ยังไม่มีรายการ");
         return;
     }
-    
-    // ดึงประวัติเก่ามาต่อเสมอ เพื่อไม่ให้ทับข้อมูลของโต๊ะอื่น
-    let latestHistory = JSON.parse(localStorage.getItem("orderHistory")) || [];
+
+    let currentOrders = JSON.parse(localStorage.getItem("currentOrders")) || [];
+
     let queueNumber = Date.now();
-    
+
     cart.forEach(i=>{
-        i.queue=queueNumber;
-        i.status="กำลังทำ";
+        i.queue = queueNumber;
+        i.status = "กำลังทำ";
     });
-    
-    latestHistory = latestHistory.concat(cart);
-    localStorage.setItem("orderHistory",JSON.stringify(latestHistory));
-    orderHistory = latestHistory; // อัปเดตตัวแปรเดิม
+
+    // เพิ่มเข้า currentOrders
+    currentOrders = currentOrders.concat(cart);
+
+    localStorage.setItem("currentOrders", JSON.stringify(currentOrders));
 
     localStorage.setItem("currentTable",document.getElementById("table").value);
     localStorage.setItem("selectedStatusTable",document.getElementById("table").value);
@@ -227,7 +229,9 @@ function confirmOrder(){
     cart=[];
     updateCart();
     closeCart();
+
     showToast("ส่งออเดอร์เรียบร้อย");
+
     setTimeout(()=>window.location.href="status.html",800);
 }
 
@@ -237,7 +241,7 @@ function checkOldStatus(){
     let box=document.getElementById("statusNotice");
     
     // เช็คจากประวัติล่าสุดเสมอ
-    let latestOrders = JSON.parse(localStorage.getItem("orderHistory")) || [];
+    let latestOrders = JSON.parse(localStorage.getItem("currentOrders")) || [];
     let oldOrders=latestOrders.filter(o=>o.table===table);
 
     box.classList.remove("hidden");

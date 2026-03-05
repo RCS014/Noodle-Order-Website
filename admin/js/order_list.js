@@ -33,7 +33,7 @@
         }
 
         function getOrders(){
-            return JSON.parse(localStorage.getItem("orderHistory")) || [];
+            return JSON.parse(localStorage.getItem("currentOrders")) || [];
         }
 
         function saveOrders(data){
@@ -126,24 +126,31 @@
         }
 
         function markReady(table){
-            let orders=getOrders();
+
+            let orders = JSON.parse(localStorage.getItem("currentOrders")) || [];
 
             orders.forEach(o=>{
-                if(o.table===table){
-                    o.status="พร้อมเสิร์ฟ";
+                if(String(o.table) === String(table)){
+                    o.status = "พร้อมเสิร์ฟ";
                 }
             });
 
-            saveOrders(orders);
-            renderAdmin();
-        }
+    localStorage.setItem("currentOrders", JSON.stringify(orders));
+
+    renderAdmin();
+}
 
         function deleteTable(table){
-            // ยืนยันก่อนลบ ป้องกันการกดผิด
+
             if(confirm(`คุณแน่ใจหรือไม่ว่าต้องการลบออเดอร์ของ โต๊ะ ${table} ?`)){
-                let orders=getOrders();
-                orders=orders.filter(o=>o.table!==table);
-                saveOrders(orders);
+                let orders = JSON.parse(localStorage.getItem("currentOrders")) || [];
+                let history = JSON.parse(localStorage.getItem("orderHistory")) || [];
+                table = String(table);
+                let tableOrders = orders.filter(o => String(o.table) === table);
+                history = history.concat(tableOrders);
+                localStorage.setItem("orderHistory", JSON.stringify(history));
+                orders = orders.filter(o => String(o.table) !== table);
+                localStorage.setItem("currentOrders", JSON.stringify(orders));
                 renderAdmin();
             }
         }
