@@ -36,38 +36,67 @@
             return JSON.parse(localStorage.getItem("currentOrders")) || [];
         }
 
+        function reorderQueue(){
+
+            let orders = JSON.parse(localStorage.getItem("currentOrders")) || [];
+
+            // sort ตาม queue
+            orders.sort((a,b)=>a.queue-b.queue);
+
+            let queueMap={};
+            let newQueue=1;
+
+            orders.forEach(o=>{
+                if(!queueMap[o.queue]){
+                    queueMap[o.queue]=newQueue++;
+                }
+                o.queue=queueMap[o.queue];
+            });
+
+            localStorage.setItem("currentOrders",JSON.stringify(orders));
+        }
+
         function saveOrders(data){
             localStorage.setItem("orderHistory", JSON.stringify(data));
         }
 
-        function groupByTable(orders){
+        function groupByQueue(orders){
             let grouped={};
             orders.forEach(o=>{
-                if(!grouped[o.table]) grouped[o.table]=[];
-                grouped[o.table].push(o);
+                if(!grouped[o.queue]) grouped[o.queue]=[];
+                grouped[o.queue].push(o);
             });
             return grouped;
         }
 
         function renderAdmin(){
-            let container=document.getElementById("orderContainer");
-            container.innerHTML="";
+            let waitingBox = document.getElementById("queueWaiting");
+            let cookingBox = document.getElementById("queueCooking");
+            let doneBox = document.getElementById("queueDone");
+
+            waitingBox.innerHTML="";
+            cookingBox.innerHTML="";
+            doneBox.innerHTML="";
 
             let orders=getOrders();
 
             if(orders.length===0){
-                container.innerHTML="<div class='col-span-full flex justify-center text-center text-gray-500 font-bold text-lg mt-10'>ไม่มีออเดอร์ในขณะนี้</div>";
+                waitingBox.innerHTML="<div class='text-gray-500 font-bold'>ไม่มีคิว</div>";
+                cookingBox.innerHTML="";
+                doneBox.innerHTML="";
                 return;
             }
 
-            let grouped=groupByTable(orders);
+            let grouped=groupByQueue(orders);
 
-            for(let table in grouped){
+            for(let queue in grouped){
+                let table = grouped[queue][0].table;
                 let tableBox=document.createElement("div");
                 tableBox.className="bg-white dark:bg-slate-900 p-5 rounded-2xl shadow-lg border border-slate-100 dark:border-slate-800 flex flex-col h-full";
 
                 let itemsHTML="";
-                grouped[table].forEach((item,index)=>{
+                
+                grouped[queue].forEach((item,index)=>{
                     // แปลงเวลาจาก queue (timestamp) มาเป็นข้อความ
                     let timeString = formatThaiDate(item.queue);
 
@@ -93,7 +122,17 @@
                                 ${spicyStr}
                             </span>
                             <div class="mt-2 text-sm border-t border-slate-200 dark:border-slate-700 pt-2">
-                                สถานะ: <span class="font-bold ${statusColor}">${item.status}</span>
+                            สถานะ: <span class="font-bold ${statusColor}">
+                            ${item.status}
+
+                            ${item.status==="กำลังทำ" ? `
+                            <button onclick="finishItem(${index},'${table}')"
+                            class="text-xs bg-green-500 text-white px-2 py-1 rounded ml-2">
+                            ทำเสร็จแล้ว
+                            </button>
+                            ` : ``}
+
+                            </span>
                             </div>
                         </div>
                     </div>`;
@@ -101,7 +140,10 @@
 
                 tableBox.innerHTML=`
                 <div class="flex justify-between items-center mb-4 pb-2 border-b border-slate-100 dark:border-slate-800">
-                    <h2 class="font-black text-2xl text-slate-900 dark:text-white">โต๊ะ <span class="text-primary">${table}</span></h2>
+                    <h2 class="font-black text-2xl text-slate-900 dark:text-white">คิว <span class="text-primary">${queue}</span>
+                    <span class="ml-2 bg-orange-500 text-white px-3 py-1 rounded-lg text-sm">
+                    โต๊ะ ${grouped[queue][0].table}
+                    </span></h2>
                 </div>
 
                 <div class="flex-grow">
@@ -109,20 +151,57 @@
                 </div>
 
                 <div class="flex gap-3 mt-4 pt-2">
-                    <button onclick="markReady('${table}')"
-                    class="flex-1 bg-primary hover:bg-primary/90 shadow-lg shadow-primary/30 text-white font-bold py-3 rounded-xl transition-all active:scale-95">
-                        ทำเสร็จแล้ว
-                    </button>
 
-                    <button onclick="deleteTable('${table}')"
-                    class="flex-none bg-rose-100 hover:bg-rose-200 text-rose-600 font-bold px-4 rounded-xl transition-all active:scale-95 flex items-center justify-center" title="ลบออเดอร์">
-                        <span class="material-symbols-outlined">delete</span>
-                    </button>
+                ${grouped[queue][0].status==="รอคิว" ? `
+                <button onclick="receiveQueue('${table}')"
+                class="flex-1 bg-blue-500 text-white font-bold py-3 rounded-xl">
+                รับคิว
+                </button>
+                ` : ``}
+
+                ${grouped[queue][0].status==="กำลังทำ" ? `
+                <button onclick="markReady('${table}')"
+                class="flex-1 bg-primary hover:bg-primary/90 text-white font-bold py-3 rounded-xl">
+                พร้อมเสิร์ฟ
+                </button>
+                ` : ``}
+
+                <button onclick="deleteTable('${table}')"
+                class="flex-none bg-rose-100 hover:bg-rose-200 text-rose-600 font-bold px-4 rounded-xl flex items-center justify-center">
+                <span class="material-symbols-outlined">delete</span>
+                </button>
+
                 </div>
                 `;
 
-                container.appendChild(tableBox);
+                let status = grouped[queue][0].status;
+
+                if(status === "รอคิว"){
+                    waitingBox.appendChild(tableBox);
+                }
+                else if(status === "กำลังทำ"){
+                    cookingBox.appendChild(tableBox);
+                }
+                else if(status === "พร้อมเสิร์ฟ"){
+                    doneBox.appendChild(tableBox);
+                }
             }
+        }
+
+        function receiveQueue(table){
+
+            let orders = JSON.parse(localStorage.getItem("currentOrders")) || [];
+
+            orders.forEach(o=>{
+            if(String(o.table) === String(table)){
+            o.status = "กำลังทำ";
+            }
+            });
+
+            localStorage.setItem("currentOrders", JSON.stringify(orders));
+
+            renderAdmin();
+
         }
 
         function markReady(table){
@@ -138,44 +217,65 @@
     localStorage.setItem("currentOrders", JSON.stringify(orders));
 
     renderAdmin();
+
 }
 
-        let tableToDelete = null; // เพิ่มตัวแปรสำหรับจำเลขโต๊ะ
+        function deleteTable(table){
 
-    function deleteTable(table){
-        tableToDelete = table; // จำว่ากำลังจะลบโต๊ะไหน
-        document.getElementById('delete-table-number').innerText = `โต๊ะ ${table}`; // เติมเลขโต๊ะในป็อปอัป
-        document.getElementById('delete-modal').classList.remove('hidden'); // แสดงป็อปอัป
-    }
+            if(confirm(`คุณแน่ใจหรือไม่ว่าต้องการลบออเดอร์ของ โต๊ะ ${table} ?`)){
+                let orders = JSON.parse(localStorage.getItem("currentOrders")) || [];
+                let history = JSON.parse(localStorage.getItem("orderHistory")) || [];
+                table = String(table);
+                let tableOrders = orders.filter(o => String(o.table) === table);
+                history = history.concat(tableOrders);
+                localStorage.setItem("orderHistory", JSON.stringify(history));
+                orders = orders.filter(o => String(o.table) !== table);
+                localStorage.setItem("currentOrders", JSON.stringify(orders));
 
-    // เมื่อกดยกเลิกในป็อปอัป
-document.getElementById('cancel-delete-btn').addEventListener('click', function() {
-    document.getElementById('delete-modal').classList.add('hidden'); // ซ่อนป็อปอัป
-    tableToDelete = null; // ล้างค่าความจำ
-});
+                reorderQueue(); // จัดคิวใหม่
 
-// เมื่อกดยืนยันการลบในป็อปอัป (ย้ายโค้ดลบเดิมของคุณมาไว้ตรงนี้)
-document.getElementById('confirm-delete-btn').addEventListener('click', function() {
-    if (tableToDelete !== null) {
-        let orders = JSON.parse(localStorage.getItem("currentOrders")) || [];
-        let history = JSON.parse(localStorage.getItem("orderHistory")) || [];
-        let table = String(tableToDelete);
-        
-        let tableOrders = orders.filter(o => String(o.table) === table);
-        history = history.concat(tableOrders);
-        localStorage.setItem("orderHistory", JSON.stringify(history));
-        
-        orders = orders.filter(o => String(o.table) !== table);
-        localStorage.setItem("currentOrders", JSON.stringify(orders));
-        
-        renderAdmin(); // รีเฟรชหน้าจอ
-        
-        // ลบเสร็จแล้วให้ปิดป็อปอัป
-        document.getElementById('delete-modal').classList.add('hidden');
-        tableToDelete = null;
-    }
-});
+                renderAdmin();
+            }
+        }
 
         renderAdmin();
         // รีเฟรชหน้าจออัตโนมัติทุกๆ 3 วินาที เพื่อเช็คออเดอร์ใหม่
         setInterval(renderAdmin, 3000);
+
+        function finishItem(index,table){
+
+            let orders = JSON.parse(localStorage.getItem("currentOrders")) || [];
+
+            let count=0;
+
+            orders.forEach(o=>{
+
+            if(String(o.table)===String(table)){
+
+            if(count===index){
+            o.status="กำลังทำ";
+            }
+
+            count++;
+
+            }
+
+            });
+
+            localStorage.setItem("currentOrders",JSON.stringify(orders));
+
+            renderAdmin();
+
+            }
+
+            function init(){
+    renderAdmin();
+    setInterval(renderAdmin,2000);
+}
+
+init();
+
+            renderAdmin();
+            setInterval(renderAdmin,2000);
+
+            window.addEventListener("storage",renderAdmin);

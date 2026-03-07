@@ -93,7 +93,8 @@ return;
 let latestQueue = Math.max(...myOrders.map(o=>o.queue));
 let currentOrders = myOrders.filter(o=>o.queue===latestQueue);
 
-document.getElementById("queueNumber").innerText=latestQueue;
+let myQueue = currentOrders[0].queue;
+document.getElementById("queueNumber").innerText=myQueue;
 
 let allReady=currentOrders.every(o=>o.status==="พร้อมเสิร์ฟ");
 
@@ -147,6 +148,8 @@ function goBackToMenu(){
 window.location.href="menu.html";
 }
 </script>
+
+<script src="navbar-script.js" defer></script>
 
 </body>
 </html>

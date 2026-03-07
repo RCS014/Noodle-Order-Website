@@ -106,7 +106,7 @@ function addNoodle(){
         price:parseInt(sizeSelect.value),
         sizeName:sizeText,
         qty:qty,
-        status:"กำลังทำ"
+        status:"รอคิว"
     };
 
     mergeItem(newItem);
@@ -127,7 +127,7 @@ function confirmSides(){
                 name:item.name,
                 price:item.price,
                 qty:qty,
-                status:"กำลังทำ"
+                status:"รอคิว"
             });
             check.checked=false;
             document.getElementById("qty"+i).value=1;
@@ -211,20 +211,32 @@ function confirmOrder(){
 
     let currentOrders = JSON.parse(localStorage.getItem("currentOrders")) || [];
 
-    let queueNumber = Date.now();
+    // หา queue ล่าสุด
+    let lastQueue = 0;
+    currentOrders.forEach(o=>{
+        if(o.queue > lastQueue){
+            lastQueue = o.queue;
+        }
+    });
+
+    // คิวใหม่
+    let queueNumber = lastQueue + 1;
+
+    let table = document.getElementById("table").value;
 
     cart.forEach(i=>{
         i.queue = queueNumber;
-        i.status = "กำลังทำ";
+        i.table = table;
+        i.status = "รอคิว";
+        i.time = Date.now();
     });
 
-    // เพิ่มเข้า currentOrders
     currentOrders = currentOrders.concat(cart);
 
     localStorage.setItem("currentOrders", JSON.stringify(currentOrders));
 
-    localStorage.setItem("currentTable",document.getElementById("table").value);
-    localStorage.setItem("selectedStatusTable",document.getElementById("table").value);
+    localStorage.setItem("currentTable", table);
+    localStorage.setItem("selectedStatusTable", table);
 
     cart=[];
     updateCart();
@@ -232,7 +244,9 @@ function confirmOrder(){
 
     showToast("ส่งออเดอร์เรียบร้อย");
 
-    setTimeout(()=>window.location.href="status.html",800);
+    setTimeout(()=>{
+        window.location.href="status.html";
+    },800);
 }
 
 function checkOldStatus(){
@@ -288,4 +302,3 @@ window.onload = function() {
     checkOldStatus();
     applyDisabledMenuItems(); // สั่งรันฟังก์ชันปิดเมนู
 };
-
