@@ -31,7 +31,7 @@
     </script>
     
     <style>
-        main, aside {
+        main, aside, popUp{
             font-family:'Kanit'
         }
         .noodle-pattern {
@@ -61,7 +61,7 @@
 
             <div class="p-8 flex flex-col items-center text-center mt-4 md:mt-0">
                 <div class="w-24 h-24 rounded-full bg-primary/10 flex items-center justify-center p-2 mb-4 ring-4 ring-primary/5">
-                    <div class="w-full h-full rounded-full bg-cover bg-center shadow-inner" data-alt="Logo for boat noodle shop P Prateep" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBQ5TQYrIKsPSEfUMXYfYUcd0a-MIaV2R7GVudVQAQAelUyzxZPYY_5yl0CGPhtiRM480QSGfTiaSeQ1c3omiDjc67jZL7aw7semk6SZKOX1HbELLGjZSOIT96x2zvELMgNLi2VEh7aAc4DMI1QwsHJGslkyV-oQ89r5EFkXcJpsUCaMY4tTWPjInEk7l346caUyI_qpdJ9m5Mm04BsXbfi2ZkPssFwT9QLyN_DXZWdShw6kbwaZ-Nvo6SBBWA1E0bDOQepnghQQ_5U');"></div>
+                    <div class="w-full h-full rounded-full bg-cover bg-center shadow-inner" data-alt="Logo for boat noodle shop P Prateep" style="background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT3QZA3z0mT9c2HAijgGyzgXpriDnX_hFysDw&s');"></div>
                 </div>
                 <h2 class="text-xl font-black text-slate-900 dark:text-white">ป. ประทีป</h2>
                 <p class="text-primary font-bold text-sm tracking-wide">ก๋วยเตี๋ยวเรือ อยุธยา</p>
@@ -79,6 +79,10 @@
                 <a class="flex items-center gap-4 px-4 py-4 rounded-2xl text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all group" href="order_history.html">
                     <span class="material-symbols-outlined group-hover:text-primary transition-colors">history</span>
                     <span class="font-bold group-hover:text-slate-900 dark:group-hover:text-white transition-colors">ประวัติการขาย (History)</span>
+                </a>
+                <a class="flex items-center gap-4 px-4 py-4 rounded-2xl text-slate-500 hover:bg-slate-50 transition-all group" href="../menu.html">
+                    <span class="material-symbols-outlined filled">simulation</span>
+                    <span class="font-bold">ทดสอบหน้าลูกค้า (Customer Test)</span>
                 </a>
             </nav>
 
@@ -126,8 +130,29 @@
 
         <div id="sidebar-overlay" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-40 hidden md:hidden transition-opacity"></div>
 
+        <popUp id="delete-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[60] hidden flex items-center justify-center transition-opacity">
+            <div class="bg-white dark:bg-slate-900 rounded-2xl p-6 max-w-sm w-full mx-4 shadow-2xl">
+                <div class="flex items-center gap-4 mb-4">
+                    <div class="w-12 h-12 rounded-full bg-rose-100 text-rose-500 flex items-center justify-center shrink-0">
+                        <span class="material-symbols-outlined text-2xl">warning</span>
+                    </div>
+                 <div>
+                        <h3 class="text-xl font-bold text-slate-900 dark:text-white">ยืนยันการลบ</h3>
+                        <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">คุณต้องการลบออเดอร์ของ <span id="delete-table-number" class="font-bold text-rose-500">โต๊ะ ?</span> หรือไม่?</p>
+                    </div>
+                </div>
+                <div class="flex gap-3 mt-6">
+                    <button id="cancel-delete-btn" class="flex-1 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-bold py-2.5 rounded-xl transition-colors">
+                        ยกเลิก
+                    </button>
+                    <button id="confirm-delete-btn" class="flex-1 bg-rose-500 hover:bg-rose-600 text-white font-bold py-2.5 rounded-xl shadow-lg shadow-rose-500/30 transition-colors">
+                        ลบรายการ
+                    </button>
+                </div>
+            </div>
+        </popUp>
     </div>
 
-    <script src="js/order_list.js"></script>
+    <script src="js/order_list.js"></script> <!-- ย้าย script ไว้ในโฟลเดอร์ js -->
 </body>
 </html>

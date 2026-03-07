@@ -203,38 +203,41 @@ function clearCart(){
 }
 
 function confirmOrder(){
-
     if(cart.length===0){
         showToast("ยังไม่มีรายการ");
         return;
     }
 
     let currentOrders = JSON.parse(localStorage.getItem("currentOrders")) || [];
-
-    // หา queue ล่าสุด
-    let lastQueue = 0;
-    currentOrders.forEach(o=>{
-        if(o.queue > lastQueue){
-            lastQueue = o.queue;
-        }
-    });
-
-    // คิวใหม่
-    let queueNumber = lastQueue + 1;
-
     let table = document.getElementById("table").value;
 
+    // =========================================
+    // ระบบรันเลขคิวรายวัน (1, 2, 3...)
+    // =========================================
+    let today = new Date().toLocaleDateString('th-TH'); // ดึงวันที่ปัจจุบัน
+    let savedDate = localStorage.getItem("orderDate");
+    let dailyQueue = parseInt(localStorage.getItem("dailyQueueCount")) || 0;
+
+    // ถ้าวันที่บันทึกไว้ ไม่ใช่วันนี้ (ขึ้นวันใหม่) ให้รีเซ็ตคิวเป็น 0
+    if (savedDate !== today) {
+        dailyQueue = 0; 
+        localStorage.setItem("orderDate", today);
+    }
+
+    dailyQueue += 1; // คิวต่อไป +1
+    localStorage.setItem("dailyQueueCount", dailyQueue);
+    
+    let timestamp = Date.now(); // เก็บเวลาแยกไว้ใช้ในระบบ History
+
     cart.forEach(i=>{
-        i.queue = queueNumber;
+        i.queue = dailyQueue; // 🌟 ให้เลขคิวโชว์เป็น 1, 2, 3...
+        i.time = timestamp;   // 🌟 ซ่อนเวลาไว้ในตัวแปร time แทน
         i.table = table;
         i.status = "รอคิว";
-        i.time = Date.now();
     });
 
     currentOrders = currentOrders.concat(cart);
-
     localStorage.setItem("currentOrders", JSON.stringify(currentOrders));
-
     localStorage.setItem("currentTable", table);
     localStorage.setItem("selectedStatusTable", table);
 
