@@ -140,20 +140,41 @@
     renderAdmin();
 }
 
-        function deleteTable(table){
+        let tableToDelete = null; // เพิ่มตัวแปรสำหรับจำเลขโต๊ะ
 
-            if(confirm(`คุณแน่ใจหรือไม่ว่าต้องการลบออเดอร์ของ โต๊ะ ${table} ?`)){
-                let orders = JSON.parse(localStorage.getItem("currentOrders")) || [];
-                let history = JSON.parse(localStorage.getItem("orderHistory")) || [];
-                table = String(table);
-                let tableOrders = orders.filter(o => String(o.table) === table);
-                history = history.concat(tableOrders);
-                localStorage.setItem("orderHistory", JSON.stringify(history));
-                orders = orders.filter(o => String(o.table) !== table);
-                localStorage.setItem("currentOrders", JSON.stringify(orders));
-                renderAdmin();
-            }
-        }
+    function deleteTable(table){
+        tableToDelete = table; // จำว่ากำลังจะลบโต๊ะไหน
+        document.getElementById('delete-table-number').innerText = `โต๊ะ ${table}`; // เติมเลขโต๊ะในป็อปอัป
+        document.getElementById('delete-modal').classList.remove('hidden'); // แสดงป็อปอัป
+    }
+
+    // เมื่อกดยกเลิกในป็อปอัป
+document.getElementById('cancel-delete-btn').addEventListener('click', function() {
+    document.getElementById('delete-modal').classList.add('hidden'); // ซ่อนป็อปอัป
+    tableToDelete = null; // ล้างค่าความจำ
+});
+
+// เมื่อกดยืนยันการลบในป็อปอัป (ย้ายโค้ดลบเดิมของคุณมาไว้ตรงนี้)
+document.getElementById('confirm-delete-btn').addEventListener('click', function() {
+    if (tableToDelete !== null) {
+        let orders = JSON.parse(localStorage.getItem("currentOrders")) || [];
+        let history = JSON.parse(localStorage.getItem("orderHistory")) || [];
+        let table = String(tableToDelete);
+        
+        let tableOrders = orders.filter(o => String(o.table) === table);
+        history = history.concat(tableOrders);
+        localStorage.setItem("orderHistory", JSON.stringify(history));
+        
+        orders = orders.filter(o => String(o.table) !== table);
+        localStorage.setItem("currentOrders", JSON.stringify(orders));
+        
+        renderAdmin(); // รีเฟรชหน้าจอ
+        
+        // ลบเสร็จแล้วให้ปิดป็อปอัป
+        document.getElementById('delete-modal').classList.add('hidden');
+        tableToDelete = null;
+    }
+});
 
         renderAdmin();
         // รีเฟรชหน้าจออัตโนมัติทุกๆ 3 วินาที เพื่อเช็คออเดอร์ใหม่
