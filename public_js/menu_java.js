@@ -85,11 +85,13 @@ function changeSideQty(i,x){
 
 /* ===== addNoodle ตามคำสั่ง ===== */
 function addNoodle(){
-    if(!selectedNoodle||!selectedSoup){
+    // 1. เช็คว่าเลือกเส้นกับซุปหรือยัง
+    if(!selectedNoodle || !selectedSoup){
         showToast("กรุณาเลือกเส้นและน้ำซุป");
         return;
     }
 
+    // 2. รวบรวมข้อมูลที่ลูกค้าเลือก
     let meats=[...document.querySelectorAll(".meat:checked")].map(m=>m.value);
     let meatText=meats.length?meats.join(", "):"ไม่เลือกเนื้อ";
     let veg=document.getElementById("vegetable").value;
@@ -99,6 +101,7 @@ function addNoodle(){
 
     let qty=parseInt(document.getElementById("qty").value);
 
+    // 3. สร้างก้อนข้อมูลออเดอร์ใหม่
     let newItem={
         table:document.getElementById("table").value,
         name:selectedNoodle+" "+selectedSoup+" ("+meatText+", "+veg+")",
@@ -109,10 +112,34 @@ function addNoodle(){
         status:"รอคิว"
     };
 
+    // 4. โยนเข้าตะกร้า
     mergeItem(newItem);
-    document.getElementById("qty").value=1;
-    // เคลียร์ค่าเนื้อที่ถูกติ๊ก (ยกเว้นอันที่ถูกล็อกพังไว้)
-    document.querySelectorAll(".meat:not([disabled])").forEach(m=>m.checked=false);
+
+    // ==========================================
+    // 🧹 ส่วนที่เพิ่มเข้ามา: รีเซ็ตค่าทั้งหมดกลับเป็นค่าเริ่มต้น
+    // ==========================================
+
+    // รีเซ็ตตัวแปรเส้นและน้ำซุป
+    selectedNoodle = null;
+    selectedSoup = null;
+
+    // ล้างสีส้ม (active) ออกจากปุ่มเส้นและน้ำซุปทั้งหมด
+    document.querySelectorAll("#noodles button, #soups button").forEach(btn => {
+        btn.classList.remove("active");
+    });
+
+    // ล้างการติ๊กถูกที่ช่องเลือกเนื้อ (ยกเว้นอันที่วัตถุดิบหมดและโดนล็อกไว้)
+    document.querySelectorAll(".meat:not([disabled])").forEach(m => m.checked = false);
+
+    // รีเซ็ตเมนู Dropdown (ผัก, ความเผ็ด, ขนาด) ให้กลับไปเป็นตัวเลือกแรกสุด
+    document.getElementById("vegetable").selectedIndex = 0;
+    document.getElementById("spicy").selectedIndex = 0;
+    document.getElementById("size").selectedIndex = 0;
+
+    // รีเซ็ตจำนวนชามกลับมาเป็น 1
+    document.getElementById("qty").value = 1;
+
+    // แสดงข้อความแจ้งเตือน
     showToast("เพิ่มรายการแล้ว");
 }
 
