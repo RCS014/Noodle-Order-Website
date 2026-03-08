@@ -66,7 +66,7 @@ function renderAdmin(){
     let orders=getOrders();
 
     if(orders.length===0){
-        waitingBox.innerHTML="<div class='text-gray-500 font-bold'>ไม่มีคิว</div>";
+        waitingBox.innerHTML="<div class='text-gray-500 font-bold text-center'>ไม่มีคิว</div>";
         return;
     }
 

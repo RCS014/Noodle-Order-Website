@@ -67,85 +67,105 @@ class="w-full border rounded-lg p-2">
 <script>
 let table = localStorage.getItem("selectedStatusTable") || localStorage.getItem("currentTable");
 let orderHistory = JSON.parse(localStorage.getItem("currentOrders")) || [];
-let notified=false;
+let notified = false;
 
 if(!table){
-window.location.href="index.html";
+    window.location.href="index.html";
 }
 
-document.getElementById("showTable").innerText=table;
+document.getElementById("showTable").innerText = table;
 
 function getMyOrders(){
-orderHistory = JSON.parse(localStorage.getItem("currentOrders")) || [];
-return orderHistory.filter(o=>o.table===table);
+    orderHistory = JSON.parse(localStorage.getItem("currentOrders")) || [];
+    return orderHistory.filter(o => o.table === table);
 }
 
 function updateStatus(){
-let myOrders=getMyOrders();
+    let myOrders = getMyOrders();
 
-if(myOrders.length===0){
-document.getElementById("statusBox").innerHTML="ยังไม่มีรายการที่สั่ง กรุณาสั่งอาหาร";
-document.getElementById("queueNumber").innerText="-";
-return;
-}
+    if(myOrders.length === 0){
+        document.getElementById("statusBox").innerHTML = "ยังไม่มีรายการที่สั่ง กรุณาสั่งอาหาร";
+        document.getElementById("queueNumber").innerText = "-";
+        return;
+    }
 
+    let latestQueue = Math.max(...myOrders.map(o => o.queue));
+    let currentOrders = myOrders.filter(o => o.queue === latestQueue);
 
-let latestQueue = Math.max(...myOrders.map(o=>o.queue));
-let currentOrders = myOrders.filter(o=>o.queue===latestQueue);
+    let myQueue = currentOrders[0].queue;
+    document.getElementById("queueNumber").innerText = myQueue;
 
-let myQueue = currentOrders[0].queue;
-document.getElementById("queueNumber").innerText=myQueue;
+    // 👉 เช็คสถานะหลักของบิลแบบเดียวกับหน้าแอดมิน
+    let mainStatus = "พร้อมเสิร์ฟ";
+    if (currentOrders.some(i => i.status === "รอคิว")) {
+        mainStatus = "รอคิว";
+    } else if (currentOrders.some(i => i.status === "กำลังทำ")) {
+        mainStatus = "กำลังทำ";
+    }
 
-let allReady=currentOrders.every(o=>o.status==="พร้อมเสิร์ฟ");
+    let statusBox = document.getElementById("statusBox");
 
-if(allReady){
-document.getElementById("statusBox").innerHTML="✅ พร้อมเสิร์ฟแล้ว";
-document.getElementById("statusBox").classList.remove("text-yellow-600","animate-pulse");
-document.getElementById("statusBox").classList.add("text-green-600");
-
-if(!notified){
-document.getElementById("notifySound").play();
-notified=true;
-}
-}else{
-document.getElementById("statusBox").innerHTML="⏳ กำลังรอคิว...";
-}
+    // 👉 อัปเดตข้อความและสีตาม 3 สถานะ
+    if (mainStatus === "พร้อมเสิร์ฟ") {
+        statusBox.innerHTML = "✅ พร้อมเสิร์ฟแล้ว";
+        statusBox.className = "mt-4 text-xl font-bold text-green-600"; // เลิกกระพริบ เปลี่ยนเป็นสีเขียว
+        
+        if(!notified){
+            document.getElementById("notifySound").play();
+            notified = true;
+        }
+    } else if (mainStatus === "กำลังทำ") {
+        statusBox.innerHTML = "🔥 กำลังทำอาหาร...";
+        statusBox.className = "mt-4 text-xl font-bold text-orange-500 animate-pulse"; // สีส้ม กระพริบ
+        notified = false; // รีเซ็ตเสียงเตือนเผื่อมีการสั่งเพิ่ม
+    } else {
+        statusBox.innerHTML = "⏳ กำลังรอคิว...";
+        statusBox.className = "mt-4 text-xl font-bold text-yellow-600 animate-pulse"; // สีเหลือง กระพริบ
+        notified = false;
+    }
 }
 
 updateStatus();
-setInterval(updateStatus,3000);
+setInterval(updateStatus, 3000);
 
 function openStatusModal(){
-loadTableOrders();
-document.getElementById("statusModal").classList.remove("hidden");
+    loadTableOrders();
+    document.getElementById("statusModal").classList.remove("hidden");
 }
 
 function closeStatusModal(){
-document.getElementById("statusModal").classList.add("hidden");
+    document.getElementById("statusModal").classList.add("hidden");
 }
 
 function loadTableOrders(){
-let box=document.getElementById("tableOrders");
-box.innerHTML="";
-let myOrders=getMyOrders();
+    let box = document.getElementById("tableOrders");
+    box.innerHTML = "";
+    let myOrders = getMyOrders();
 
-if(myOrders.length===0){
-box.innerHTML="ยังไม่มีรายการที่สั่ง กรุณาสั่งอาหาร";
-return;
-}
+    if(myOrders.length === 0){
+        box.innerHTML = "ยังไม่มีรายการที่สั่ง กรุณาสั่งอาหาร";
+        return;
+    }
 
-myOrders.forEach(i=>{
-box.innerHTML+=`
-<div class="border p-2 rounded">
-${i.name} x ${i.qty}<br>
-${i.spicy ? "🌶 "+i.spicy+"<br>" : ""}
-สถานะ: ${i.status}
-</div>`;
-});
+    myOrders.forEach(i => {
+        // 👉 ใส่สีให้สถานะรายชิ้นในป็อปอัปด้วย
+        let statusColor = "text-yellow-600";
+        if(i.status === "กำลังทำ") statusColor = "text-orange-500";
+        if(i.status === "พร้อมเสิร์ฟ") statusColor = "text-green-600";
+
+        box.innerHTML += `
+        <div class="border p-3 rounded-xl mb-2 bg-slate-50">
+            <div class="font-semibold text-gray-800">${i.name} <span class="text-orange-600 ml-1">x ${i.qty}</span></div>
+            ${i.spicy ? `<div class="text-sm text-gray-500">🌶 ${i.spicy}</div>` : ""}
+            <div class="mt-1 text-sm">
+                สถานะ: <span class="font-bold ${statusColor}">${i.status}</span>
+            </div>
+        </div>`;
+    });
 }
 
 function goBackToMenu(){
-window.location.href="menu.html";
+    window.location.href="menu.html";
 }
 </script>
 
