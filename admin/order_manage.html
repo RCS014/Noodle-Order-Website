@@ -131,9 +131,10 @@
                         <h2 class="text-2xl font-bold text-slate-900 dark:text-white">ประเภทเส้น</h2>
                     </div>
                     
-                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                    <div id="noodle-grid"
+class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
                         
-                        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 flex items-center justify-between shadow-sm hover:shadow-md transition-all">
+                        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 flex items-center justify-between menu-card shadow-sm hover:shadow-md transition-all">
                             <div class="flex items-center gap-4">
                                 <div>
                                     <h3 class="font-bold text-lg text-slate-900 dark:text-white leading-tight">เส้นเล็ก</h3>
@@ -142,11 +143,15 @@
                             </div>
                             <label class="relative inline-flex items-center cursor-pointer">
                                 <input type="checkbox" value="" class="sr-only peer" checked>
+
+                                
                                 <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-primary"></div>
                             </label>
+                            <button onclick="deleteItem(this)"
+class="text-red-500 ml-3">ลบ</button>
                         </div>
 
-                        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 flex items-center justify-between shadow-sm hover:shadow-md transition-all">
+                        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 flex items-center justify-between menu-card shadow-sm hover:shadow-md transition-all">
                             <div class="flex items-center gap-4">
                                 <div>
                                     <h3 class="font-bold text-lg text-slate-900 dark:text-white leading-tight">เส้นหมี่</h3>
@@ -155,11 +160,15 @@
                             </div>
                             <label class="relative inline-flex items-center cursor-pointer">
                                 <input type="checkbox" value="" class="sr-only peer" checked>
+
+                                
                                 <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-primary"></div>
                             </label>
+                            <button onclick="deleteItem(this)"
+class="text-red-500 ml-3">ลบ</button>
                         </div>
 
-                        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 flex items-center justify-between shadow-sm hover:shadow-md transition-all">
+                        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 flex items-center justify-between menu-card shadow-sm hover:shadow-md transition-all">
                             <div class="flex items-center gap-4">
                                 <div>
                                     <h3 class="font-bold text-lg text-slate-900 dark:text-white leading-tight">เส้นใหญ่</h3>
@@ -168,11 +177,15 @@
                             </div>
                             <label class="relative inline-flex items-center cursor-pointer">
                                 <input type="checkbox" value="" class="sr-only peer" checked>
+
+                                
                                 <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-primary"></div>
                             </label>
+                            <button onclick="deleteItem(this)"
+class="text-red-500 ml-3">ลบ</button>
                         </div>
 
-                        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 flex items-center justify-between shadow-sm hover:shadow-md transition-all">
+                        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 flex items-center justify-between menu-card shadow-sm hover:shadow-md transition-all">
                             <div class="flex items-center gap-4">
                                 <div>
                                     <h3 class="font-bold text-lg text-slate-900 dark:text-white leading-tight">บะหมี่</h3>
@@ -181,11 +194,15 @@
                             </div>
                             <label class="relative inline-flex items-center cursor-pointer">
                                 <input type="checkbox" value="" class="sr-only peer" checked>
+
+                                
                                 <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-primary"></div>
                             </label>
+                            <button onclick="deleteItem(this)"
+class="text-red-500 ml-3">ลบ</button>
                         </div>
                         
-                        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 flex items-center justify-between shadow-sm hover:shadow-md transition-all">
+                        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 flex items-center justify-between menu-card shadow-sm hover:shadow-md transition-all">
                             <div class="flex items-center gap-4">
                                 <div>
                                     <h3 class="font-bold text-lg text-slate-900 dark:text-white leading-tight">วุ้นเส้น</h3>
@@ -194,8 +211,12 @@
                             </div>
                             <label class="relative inline-flex items-center cursor-pointer">
                                 <input type="checkbox" value="" class="sr-only peer" checked>
+
+                                
                                 <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-primary"></div>
                             </label>
+                            <button onclick="deleteItem(this)"
+class="text-red-500 ml-3">ลบ</button>
                         </div>
 
                     </div>
@@ -208,9 +229,10 @@
                         <h2 class="text-2xl font-bold text-slate-900 dark:text-white">เนื้อ</h2>
                     </div>
                     
-                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                    <div id="meat-grid"
+class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
                         
-                        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 flex items-center justify-between shadow-sm hover:shadow-md transition-all">
+                        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 flex items-center justify-between menu-card shadow-sm hover:shadow-md transition-all">
                             <div class="flex items-center gap-4">
                                 <div>
                                     <h3 class="font-bold text-lg text-slate-900 dark:text-white leading-tight">หมูสด</h3>
@@ -219,11 +241,15 @@
                             </div>
                             <label class="relative inline-flex items-center cursor-pointer">
                                 <input type="checkbox" value="" class="sr-only peer" checked>
+
+                                
                                 <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-primary"></div>
                             </label>
+                            <button onclick="deleteItem(this)"
+class="text-red-500 ml-3">ลบ</button>
                         </div>
 
-                        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 flex items-center justify-between shadow-sm hover:shadow-md transition-all">
+                        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 flex items-center justify-between menu-card shadow-sm hover:shadow-md transition-all">
                             <div class="flex items-center gap-4">
                                 <div>
                                     <h3 class="font-bold text-lg text-slate-900 dark:text-white leading-tight">เนื้อสด</h3>
@@ -232,11 +258,15 @@
                             </div>
                             <label class="relative inline-flex items-center cursor-pointer">
                                 <input type="checkbox" value="" class="sr-only peer" checked>
+
+                                
                                 <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-primary"></div>
                             </label>
+                            <button onclick="deleteItem(this)"
+class="text-red-500 ml-3">ลบ</button>
                         </div>
 
-                        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 flex items-center justify-between shadow-sm hover:shadow-md transition-all">
+                        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 flex items-center justify-between menu-card shadow-sm hover:shadow-md transition-all">
                             <div class="flex items-center gap-4">
                                 <div>
                                     <h3 class="font-bold text-lg text-slate-900 dark:text-white leading-tight">ตับ</h3>
@@ -245,11 +275,15 @@
                             </div>
                             <label class="relative inline-flex items-center cursor-pointer">
                                 <input type="checkbox" value="" class="sr-only peer" checked>
+
+                                
                                 <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-primary"></div>
                             </label>
+                            <button onclick="deleteItem(this)"
+class="text-red-500 ml-3">ลบ</button>
                         </div>
 
-                        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 flex items-center justify-between shadow-sm hover:shadow-md transition-all">
+                        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 flex items-center justify-between menu-card shadow-sm hover:shadow-md transition-all">
                             <div class="flex items-center gap-4">
                                 <div>
                                     <h3 class="font-bold text-lg text-slate-900 dark:text-white leading-tight">ลูกชิ้น</h3>
@@ -258,8 +292,12 @@
                             </div>
                             <label class="relative inline-flex items-center cursor-pointer">
                                 <input type="checkbox" value="" class="sr-only peer" checked>
+
+                                
                                 <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-primary"></div>
                             </label>
+                            <button onclick="deleteItem(this)"
+                                class="text-red-500 ml-3">ลบ</button>
                         </div>
 
                     </div>
@@ -272,9 +310,10 @@
                         <h2 class="text-2xl font-bold text-slate-900 dark:text-white">เครื่องเคียง</h2>
                     </div>
                     
-                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                    <div id="extra-grid"
+class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
                         
-                        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 flex items-center justify-between shadow-sm hover:shadow-md transition-all">
+                        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 flex items-center justify-between menu-card shadow-sm hover:shadow-md transition-all">
                             <div class="flex items-center gap-4">
                                 <div>
                                     <h3 class="font-bold text-lg text-slate-900 dark:text-white leading-tight">ผักบุ้งลวก</h3>
@@ -283,11 +322,15 @@
                             </div>
                             <label class="relative inline-flex items-center cursor-pointer">
                                 <input type="checkbox" value="" class="sr-only peer" checked>
+
+                                
                                 <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-primary"></div>
                             </label>
+                            <button onclick="deleteItem(this)"
+class="text-red-500 ml-3">ลบ</button>
                         </div>
 
-                        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 flex items-center justify-between shadow-sm hover:shadow-md transition-all">
+                        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 flex items-center justify-between menu-card shadow-sm hover:shadow-md transition-all">
                             <div class="flex items-center gap-4">
                                 <div>
                                     <h3 class="font-bold text-lg text-slate-900 dark:text-white leading-tight">กากหมู</h3>
@@ -296,11 +339,15 @@
                             </div>
                             <label class="relative inline-flex items-center cursor-pointer">
                                 <input type="checkbox" value="" class="sr-only peer" checked>
+
+                                
                                 <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-primary"></div>
                             </label>
+                            <button onclick="deleteItem(this)"
+class="text-red-500 ml-3">ลบ</button>
                         </div>
 
-                        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 flex items-center justify-between shadow-sm hover:shadow-md transition-all">
+                        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 flex items-center justify-between menu-card shadow-sm hover:shadow-md transition-all">
                             <div class="flex items-center gap-4">
                                 <div>
                                     <h3 class="font-bold text-lg text-slate-900 dark:text-white leading-tight">หมูลวก</h3>
@@ -309,11 +356,15 @@
                             </div>
                             <label class="relative inline-flex items-center cursor-pointer">
                                 <input type="checkbox" value="" class="sr-only peer" checked>
+
+                                
                                 <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-primary"></div>
                             </label>
+                            <button onclick="deleteItem(this)"
+class="text-red-500 ml-3">ลบ</button>
                         </div>
                         
-                        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 flex items-center justify-between shadow-sm hover:shadow-md transition-all">
+                        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 flex items-center justify-between menu-card shadow-sm hover:shadow-md transition-all">
                             <div class="flex items-center gap-4">
                                 <div>
                                     <h3 class="font-bold text-lg text-slate-900 dark:text-white leading-tight">แคบหมู</h3>
@@ -322,11 +373,15 @@
                             </div>
                             <label class="relative inline-flex items-center cursor-pointer">
                                 <input type="checkbox" value="" class="sr-only peer" checked>
+
+                                
                                 <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-primary"></div>
                             </label>
+                            <button onclick="deleteItem(this)"
+class="text-red-500 ml-3">ลบ</button>
                         </div>
 
-                        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 flex items-center justify-between shadow-sm hover:shadow-md transition-all">
+                        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 flex items-center justify-between menu-card shadow-sm hover:shadow-md transition-all">
                             <div class="flex items-center gap-4">
                                 <div>
                                     <h3 class="font-bold text-lg text-slate-900 dark:text-white leading-tight">เนื้อลวก</h3>
@@ -335,11 +390,15 @@
                             </div>
                             <label class="relative inline-flex items-center cursor-pointer">
                                 <input type="checkbox" value="" class="sr-only peer" checked>
+
+                                
                                 <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-primary"></div>
                             </label>
+                            <button onclick="deleteItem(this)"
+class="text-red-500 ml-3">ลบ</button>
                         </div>
 
-                        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 flex items-center justify-between shadow-sm hover:shadow-md transition-all">
+                        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 flex items-center justify-between menu-card shadow-sm hover:shadow-md transition-all">
                             <div class="flex items-center gap-4">
                                 <div>
                                     <h3 class="font-bold text-lg text-slate-900 dark:text-white leading-tight">ลูกชิ้นลวก</h3>
@@ -348,11 +407,15 @@
                             </div>
                             <label class="relative inline-flex items-center cursor-pointer">
                                 <input type="checkbox" value="" class="sr-only peer" checked>
+
+                                
                                 <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-primary"></div>
                             </label>
+                            <button onclick="deleteItem(this)"
+class="text-red-500 ml-3">ลบ</button>
                         </div>
 
-                        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 flex items-center justify-between shadow-sm hover:shadow-md transition-all">
+                        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 flex items-center justify-between menu-card shadow-sm hover:shadow-md transition-all">
                             <div class="flex items-center gap-4">
                                 <div>
                                     <h3 class="font-bold text-lg text-slate-900 dark:text-white leading-tight">ตับลวก</h3>
@@ -361,11 +424,15 @@
                             </div>
                             <label class="relative inline-flex items-center cursor-pointer">
                                 <input type="checkbox" value="" class="sr-only peer" checked>
+
+                                
                                 <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-primary"></div>
                             </label>
+                            <button onclick="deleteItem(this)"
+class="text-red-500 ml-3">ลบ</button>
                         </div>
 
-                        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 flex items-center justify-between shadow-sm hover:shadow-md transition-all">
+                        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 flex items-center justify-between menu-card shadow-sm hover:shadow-md transition-all">
                             <div class="flex items-center gap-4">
                                 <div>
                                     <h3 class="font-bold text-lg text-slate-900 dark:text-white leading-tight">ข้าวเปล่า</h3>
@@ -374,11 +441,15 @@
                             </div>
                             <label class="relative inline-flex items-center cursor-pointer">
                                 <input type="checkbox" value="" class="sr-only peer" checked>
+
+                                
                                 <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-primary"></div>
                             </label>
+                            <button onclick="deleteItem(this)"
+class="text-red-500 ml-3">ลบ</button>
                         </div>
 
-                        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 flex items-center justify-between shadow-sm hover:shadow-md transition-all">
+                        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 flex items-center justify-between menu-card shadow-sm hover:shadow-md transition-all">
                             <div class="flex items-center gap-4">
                                 <div>
                                     <h3 class="font-bold text-lg text-slate-900 dark:text-white leading-tight">ขนมถ้วย</h3>
@@ -387,15 +458,21 @@
                             </div>
                             <label class="relative inline-flex items-center cursor-pointer">
                                 <input type="checkbox" value="" class="sr-only peer" checked>
+
+                                
                                 <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-primary"></div>
                             </label>
+                            <button onclick="deleteItem(this)"
+                                class="text-red-500 ml-3">ลบ</button>
                         </div>
 
                     </div>
                 </section>
 
             </div>
+            </div>
             </main>
+            
 
     </div>
 
@@ -403,5 +480,49 @@
 
     <script src="navbar-script.js" defer></script>
 
+<button onclick="openPopup()"
+class="fixed bottom-6 right-6 bg-green-500 text-white
+w-14 h-14 rounded-full text-3xl shadow-lg
+hover:bg-green-600 z-50">
++
+</button>
+<div id="addPopup"
+class="fixed inset-0 bg-black bg-opacity-40 hidden
+flex items-center justify-center z-50">
+
+<div class="bg-white rounded-2xl p-6 w-80 shadow-lg">
+
+<h2 class="text-xl font-bold mb-4">เพิ่มรายการเมนู</h2>
+
+<input id="menuName"
+type="text"
+placeholder="ชื่อเมนู"
+class="w-full border p-2 rounded mb-3">
+
+<select id="menuType"
+class="w-full border p-2 rounded mb-4">
+
+<option value="noodle-grid">เส้น</option>
+<option value="meat-grid">เนื้อ</option>
+<option value="extra-grid">เครื่องเคียง</option>
+
+</select>
+
+<div class="flex justify-end gap-2">
+
+<button onclick="closePopup()"
+class="px-3 py-2 bg-gray-300 rounded">
+ยกเลิก
+</button>
+
+<button onclick="addMenuItem()"
+class="px-3 py-2 bg-green-500 text-white rounded">
+เพิ่ม
+</button>
+
+</div>
+
+</div>
+</div>
 </body>
 </html>
