@@ -142,9 +142,11 @@ function renderAdmin(){
             จบออเดอร์
         </button>` : ``}
 
+        ${mainStatus !== "พร้อมเสิร์ฟ" ? `
         <button onclick="openDeleteModal('${table}', '${queue}')" class="flex-none bg-rose-100 hover:bg-rose-200 text-rose-600 font-bold px-4 rounded-xl flex items-center justify-center">
             <span class="material-symbols-outlined">delete</span>
         </button>
+        ` : ``}
 
         </div>`;
 
