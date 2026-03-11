@@ -302,8 +302,8 @@ function applyDisabledMenuItems() {
         let itemName = btn.dataset.name;
         if (disabledItems.includes(itemName)) {
             btn.setAttribute('disabled', 'true');
-            // 👉 เพิ่ม pointer-events-none และ grayscale เพื่อสตาฟฟ์การ์ด 100%
-            btn.classList.add('opacity-50', 'grayscale', 'cursor-not-allowed', 'pointer-events-none');
+            // 👉 คืนชีพ 'line-through' และ 'text-gray-500' กลับมา
+            btn.classList.add('opacity-50', 'grayscale', 'cursor-not-allowed', 'pointer-events-none', 'line-through', 'text-gray-500');
         }
     });
 
@@ -313,8 +313,8 @@ function applyDisabledMenuItems() {
         if (disabledItems.includes(itemName)) {
             checkbox.disabled = true;
             let label = checkbox.parentElement;
-            // 👉 เพิ่ม pointer-events-none และ grayscale ให้การ์ดเนื้อสัตว์ 100%
-            label.classList.add('opacity-50', 'grayscale', 'cursor-not-allowed', 'pointer-events-none');
+            // 👉 คืนชีพ 'line-through' และ 'text-gray-500' กลับมา
+            label.classList.add('opacity-50', 'grayscale', 'cursor-not-allowed', 'pointer-events-none', 'line-through', 'text-gray-500');
         }
     });
 }
