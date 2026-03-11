@@ -117,11 +117,9 @@ function renderAdmin(){
         if(grouped[queue].some(i => i.status === "รอคิว")) mainStatus = "รอคิว";
         else if(grouped[queue].some(i => i.status === "กำลังทำ")) mainStatus = "กำลังทำ";
 
-        let queueTitle = "";
-
-        if(mainStatus === "รอคิว"){
-         queueTitle = `คิว <span class="text-primary">${waitingNumber++}</span>`;
-         }
+        // 👉 แก้ตรงนี้: ดึงเลขคิวของจริงจากฐานข้อมูลมาโชว์ (ให้ตรงกับหน้าลูกค้าเป๊ะๆ)
+        let realQueue = grouped[queue][0].queue;
+        let queueTitle = `คิว <span class="text-primary">${realQueue}</span>`;
 
         tableBox.innerHTML = `
         <div class="flex justify-between items-center mb-4 pb-2 border-b border-slate-100 dark:border-slate-800">
