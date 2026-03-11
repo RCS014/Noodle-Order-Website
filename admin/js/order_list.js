@@ -248,16 +248,17 @@ function confirmDeleteAction() {
         let orders = getOrders();
         let history = JSON.parse(localStorage.getItem("orderHistory")) || [];
         
-        orders = orders.filter(o => String(o.queue) !== String(queueToDelete) && String(o.time) !== String(queueToDelete));
+        // 👉 1. ดึงข้อมูลบิลที่ต้องการลบออกมาก่อน (แก้บั๊กที่ตัวแปรนี้หายไป)
+        let tableOrders = orders.filter(o => String(o.queue) === String(queueToDelete) || String(o.time) === String(queueToDelete));
         
         // 🔴 สำคัญ: ต้องเปลี่ยนสถานะเป็น "ยกเลิก" ก่อนย้ายไป History 
-        // ไม่งั้น History จะมองไม่เห็น หรือดึงไปแสดงผิดสี
         tableOrders.forEach(o => o.status = "ยกเลิก"); 
         
         history = history.concat(tableOrders);
         localStorage.setItem("orderHistory", JSON.stringify(history));
         
-        orders = orders.filter(o => String(o.queue) !== String(queueToDelete));
+        // 👉 2. ลบออเดอร์นี้ออกจากกระดานคิว (ลบให้เกลี้ยงทั้ง queue และ time)
+        orders = orders.filter(o => String(o.queue) !== String(queueToDelete) && String(o.time) !== String(queueToDelete));
         saveOrders(orders);
         
         renderAdmin(); 
@@ -289,21 +290,13 @@ document.addEventListener('DOMContentLoaded', () => {
 let finishOrderIndex = null;
 
 function openFinishPopup(index){
-finishOrderIndex = index;
-document.getElementById("finishPopup").classList.remove("hidden");
-
-        if(mainStatus === "รอคิว") waitingBox.appendChild(tableBox);
-        else if(mainStatus === "กำลังทำ") cookingBox.appendChild(tableBox);
-        else doneBox.appendChild(tableBox);
-    };
-
+    finishOrderIndex = index;
+    document.getElementById("finishPopup").classList.remove("hidden");
+}
 
 function closeFinishPopup(){
-
-document.getElementById("finishPopup").classList.add("hidden");
-
-finishOrderIndex = null;
-
+    document.getElementById("finishPopup").classList.add("hidden");
+    finishOrderIndex = null;
 }
 
 function confirmFinishOrder(){
