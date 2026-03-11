@@ -8,7 +8,7 @@ let disabledItems = JSON.parse(localStorage.getItem('disabledMenuItems')) || [];
 
 /* ===== ระบบเครื่องเคียงครบ ===== */
 const sides=[
-{name:"ผักบุ้งลวก",price:10},
+{name:"ผักบุ้งลวก",price:55},
 {name:"กากหมู",price:20},
 {name:"หมูลวก",price:60},
 {name:"แคปหมู",price:20},
@@ -35,9 +35,9 @@ sides.forEach((item,i)=>{
             </label>
         </div>
         <div class="flex items-center gap-2 pl-6">
-            <button onclick="changeSideQty(${i},-1)" class="bg-gray-200 w-9 h-9 rounded-lg" ${isOut ? 'disabled' : ''}>➖</button>
+            <button onclick="changeSideQty(${i},-1)" class="bg-gray-200 w-9 h-9 rounded-lg" ${isOut ? 'disabled' : ''}>-</button>
             <input type="number" id="qty${i}" value="1" min="1" class="w-16 text-center border rounded p-1" ${isOut ? 'disabled' : ''}>
-            <button onclick="changeSideQty(${i},1)" class="bg-gray-200 w-9 h-9 rounded-lg" ${isOut ? 'disabled' : ''}>➕</button>
+            <button onclick="changeSideQty(${i},1)" class="bg-gray-200 w-9 h-9 rounded-lg" ${isOut ? 'disabled' : ''}>+</button>
         </div>
     </div>`;
 });
@@ -85,11 +85,13 @@ function changeSideQty(i,x){
 
 /* ===== addNoodle ตามคำสั่ง ===== */
 function addNoodle(){
-    if(!selectedNoodle||!selectedSoup){
+    // 1. เช็คว่าเลือกเส้นกับซุปหรือยัง
+    if(!selectedNoodle || !selectedSoup){
         showToast("กรุณาเลือกเส้นและน้ำซุป");
         return;
     }
 
+    // 2. รวบรวมข้อมูลที่ลูกค้าเลือก
     let meats=[...document.querySelectorAll(".meat:checked")].map(m=>m.value);
     let meatText=meats.length?meats.join(", "):"ไม่เลือกเนื้อ";
     let veg=document.getElementById("vegetable").value;
@@ -99,6 +101,7 @@ function addNoodle(){
 
     let qty=parseInt(document.getElementById("qty").value);
 
+    // 3. สร้างก้อนข้อมูลออเดอร์ใหม่
     let newItem={
         table:document.getElementById("table").value,
         name:selectedNoodle+" "+selectedSoup+" ("+meatText+", "+veg+")",
@@ -109,10 +112,34 @@ function addNoodle(){
         status:"รอคิว"
     };
 
+    // 4. โยนเข้าตะกร้า
     mergeItem(newItem);
-    document.getElementById("qty").value=1;
-    // เคลียร์ค่าเนื้อที่ถูกติ๊ก (ยกเว้นอันที่ถูกล็อกพังไว้)
-    document.querySelectorAll(".meat:not([disabled])").forEach(m=>m.checked=false);
+
+    // ==========================================
+    // 🧹 ส่วนที่เพิ่มเข้ามา: รีเซ็ตค่าทั้งหมดกลับเป็นค่าเริ่มต้น
+    // ==========================================
+
+    // รีเซ็ตตัวแปรเส้นและน้ำซุป
+    selectedNoodle = null;
+    selectedSoup = null;
+
+    // ล้างสีส้ม (active) ออกจากปุ่มเส้นและน้ำซุปทั้งหมด
+    document.querySelectorAll("#noodles button, #soups button").forEach(btn => {
+        btn.classList.remove("active");
+    });
+
+    // ล้างการติ๊กถูกที่ช่องเลือกเนื้อ (ยกเว้นอันที่วัตถุดิบหมดและโดนล็อกไว้)
+    document.querySelectorAll(".meat:not([disabled])").forEach(m => m.checked = false);
+
+    // รีเซ็ตเมนู Dropdown (ผัก, ความเผ็ด, ขนาด) ให้กลับไปเป็นตัวเลือกแรกสุด
+    document.getElementById("vegetable").selectedIndex = 0;
+    document.getElementById("spicy").selectedIndex = 0;
+    document.getElementById("size").selectedIndex = 0;
+
+    // รีเซ็ตจำนวนชามกลับมาเป็น 1
+    document.getElementById("qty").value = 1;
+
+    // แสดงข้อความแจ้งเตือน
     showToast("เพิ่มรายการแล้ว");
 }
 
@@ -203,38 +230,41 @@ function clearCart(){
 }
 
 function confirmOrder(){
-
     if(cart.length===0){
         showToast("ยังไม่มีรายการ");
         return;
     }
 
     let currentOrders = JSON.parse(localStorage.getItem("currentOrders")) || [];
-
-    // หา queue ล่าสุด
-    let lastQueue = 0;
-    currentOrders.forEach(o=>{
-        if(o.queue > lastQueue){
-            lastQueue = o.queue;
-        }
-    });
-
-    // คิวใหม่
-    let queueNumber = lastQueue + 1;
-
     let table = document.getElementById("table").value;
 
+    // =========================================
+    // ระบบรันเลขคิวรายวัน (1, 2, 3...)
+    // =========================================
+    let today = new Date().toLocaleDateString('th-TH'); // ดึงวันที่ปัจจุบัน
+    let savedDate = localStorage.getItem("orderDate");
+    let dailyQueue = parseInt(localStorage.getItem("dailyQueueCount")) || 0;
+
+    // ถ้าวันที่บันทึกไว้ ไม่ใช่วันนี้ (ขึ้นวันใหม่) ให้รีเซ็ตคิวเป็น 0
+    if (savedDate !== today) {
+        dailyQueue = 0; 
+        localStorage.setItem("orderDate", today);
+    }
+
+    dailyQueue += 1; // คิวต่อไป +1
+    localStorage.setItem("dailyQueueCount", dailyQueue);
+    
+    let timestamp = Date.now(); // เก็บเวลาแยกไว้ใช้ในระบบ History
+
     cart.forEach(i=>{
-        i.queue = queueNumber;
+        i.queue = dailyQueue; // 🌟 ให้เลขคิวโชว์เป็น 1, 2, 3...
+        i.time = timestamp;   // 🌟 ซ่อนเวลาไว้ในตัวแปร time แทน
         i.table = table;
         i.status = "รอคิว";
-        i.time = Date.now();
     });
 
     currentOrders = currentOrders.concat(cart);
-
     localStorage.setItem("currentOrders", JSON.stringify(currentOrders));
-
     localStorage.setItem("currentTable", table);
     localStorage.setItem("selectedStatusTable", table);
 
@@ -285,6 +315,7 @@ function applyDisabledMenuItems() {
         }
     });
 
+
     // ปิดกั้นช่องติ๊กถูกเลือก เนื้อสัตว์
     document.querySelectorAll('.meat').forEach(checkbox => {
         let itemName = checkbox.value;
@@ -295,6 +326,53 @@ function applyDisabledMenuItems() {
             label.classList.add('opacity-50', 'text-gray-400', 'line-through', 'cursor-not-allowed');
         }
     });
+}
+
+document.querySelectorAll('.meat-card input').forEach(input=>{
+input.addEventListener('change',function(){
+
+if(this.checked){
+this.parentElement.classList.add('active')
+}else{
+this.parentElement.classList.remove('active')
+}
+
+})
+})
+
+function resetMenuSelections(){
+
+// รีเซ็ตเส้น
+document.querySelectorAll('#noodles button').forEach(btn=>{
+btn.classList.remove('active')
+})
+
+// รีเซ็ตน้ำซุป
+document.querySelectorAll('#soups button').forEach(btn=>{
+btn.classList.remove('active')
+})
+
+// รีเซ็ตเนื้อ
+document.querySelectorAll('.meat').forEach(cb=>{
+cb.checked = false
+})
+
+document.querySelectorAll('.meat-card').forEach(card=>{
+card.classList.remove('active')
+})
+
+// รีเซ็ตผัก
+const veg = document.getElementById('vegetable')
+if(veg) veg.selectedIndex = 0
+
+// รีเซ็ตความเผ็ด
+const spicy = document.getElementById('spicy')
+if(spicy) spicy.selectedIndex = 0
+
+// รีเซ็ตขนาด
+const size = document.getElementById('size')
+if(size) size.selectedIndex = 0
+
 }
 
 // โหลดฟังก์ชันทั้งหมดเมื่อเปิดหน้าเว็บ
