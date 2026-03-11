@@ -286,12 +286,15 @@ function checkOldStatus(){
     if(oldOrders.length===0){
         box.innerHTML="❌ โต๊ะนี้ยังไม่มีรายการที่สั่ง กรุณาสั่งอาหาร";
     }else{
+        // 👉 ใช้ div flex justify-between เพื่อดันข้อความไว้ซ้าย และดันปุ่มไว้ขวาสุด
         box.innerHTML=`
-        📋 โต๊ะนี้มีรายการเดิมอยู่
-        <button onclick="window.location.href='status.html'" 
-        class="ml-2 bg-orange-600 text-white px-3 py-1 rounded-lg text-sm">
-        ดูสถานะ
-        </button>`;
+        <div class="flex justify-between items-center w-full">
+            <span class="font-medium text-yellow-800">📋 โต๊ะนี้มีรายการเดิมอยู่</span>
+            <button onclick="window.location.href='status.html'" 
+            class="bg-orange-600 hover:bg-orange-700 text-white px-4 py-1.5 rounded-lg text-sm font-bold shadow-sm transition-transform active:scale-95">
+                ดูสถานะ
+            </button>
+        </div>`;
     }
 }
 
