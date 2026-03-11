@@ -8,10 +8,10 @@ let disabledItems = JSON.parse(localStorage.getItem('disabledMenuItems')) || [];
 
 /* ===== ระบบเครื่องเคียงครบ ===== */
 const sides=[
-{name:"ผักบุ้งลวก",price:55},
+{name:"ผักบุ้งลวก",price:10},
 {name:"กากหมู",price:20},
 {name:"หมูลวก",price:60},
-{name:"แคปหมู",price:20},
+{name:"แคบหมู",price:20},
 {name:"เนื้อลวก",price:60},
 {name:"ลูกชิ้นลวก",price:20},
 {name:"ตับลวก",price:60},
@@ -22,12 +22,11 @@ const sides=[
 const sideContainer=document.getElementById("sideMenu");
 
 sides.forEach((item,i)=>{
-    // 2. 👉 เช็คว่าเครื่องเคียงชิ้นนี้ "หมด" หรือไม่
     let isOut = disabledItems.includes(item.name);
     
-    // 3. 👉 ปรับหน้าตาให้เป็นสีเทาและกดไม่ได้ ถ้าของหมด
+    // 👉 เพิ่ม pointer-events-none ในเงื่อนไขบรรทัดล่างนี้
     sideContainer.innerHTML+=`
-    <div class="border p-4 rounded-xl shadow-sm space-y-3 ${isOut ? 'bg-gray-100 opacity-60 grayscale' : 'bg-white'}">
+    <div class="border p-4 rounded-xl shadow-sm space-y-3 ${isOut ? 'bg-gray-100 opacity-50 grayscale pointer-events-none' : 'bg-white'}">
         <div class="flex items-center gap-2">
             <input type="checkbox" id="side${i}" ${isOut ? 'disabled' : ''}>
             <label for="side${i}" class="font-medium ${isOut ? 'line-through text-gray-500' : ''}">
@@ -303,12 +302,10 @@ function applyDisabledMenuItems() {
         let itemName = btn.dataset.name;
         if (disabledItems.includes(itemName)) {
             btn.setAttribute('disabled', 'true');
-            // เพิ่มดีไซน์ให้ดูรู้ว่าของหมด (สีเทา ขีดฆ่า)
-            btn.classList.add('opacity-50', 'bg-gray-100', 'text-gray-400', 'line-through', 'cursor-not-allowed');
-            btn.classList.remove('hover:bg-orange-100');
+            // 👉 เพิ่ม pointer-events-none และ grayscale เพื่อสตาฟฟ์การ์ด 100%
+            btn.classList.add('opacity-50', 'grayscale', 'cursor-not-allowed', 'pointer-events-none');
         }
     });
-
 
     // ปิดกั้นช่องติ๊กถูกเลือก เนื้อสัตว์
     document.querySelectorAll('.meat').forEach(checkbox => {
@@ -316,8 +313,8 @@ function applyDisabledMenuItems() {
         if (disabledItems.includes(itemName)) {
             checkbox.disabled = true;
             let label = checkbox.parentElement;
-            // เพิ่มดีไซน์ให้ดูรู้ว่าของหมด (สีเทา ขีดฆ่า)
-            label.classList.add('opacity-50', 'text-gray-400', 'line-through', 'cursor-not-allowed');
+            // 👉 เพิ่ม pointer-events-none และ grayscale ให้การ์ดเนื้อสัตว์ 100%
+            label.classList.add('opacity-50', 'grayscale', 'cursor-not-allowed', 'pointer-events-none');
         }
     });
 }
