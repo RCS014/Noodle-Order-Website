@@ -57,12 +57,19 @@ function switchPage(p){
 function singleSelect(id,cb){
     document.getElementById(id).querySelectorAll("button").forEach(btn=>{
         btn.onclick=()=>{
-            // 4. 👉 ป้องกันไม่ให้ลูกค้าคลิกเลือกปุ่มที่ของหมดแล้วได้
+            // ป้องกันไม่ให้ลูกค้าคลิกเลือกปุ่มที่ของหมดแล้วได้
             if(btn.hasAttribute('disabled')) return;
             
-            document.getElementById(id).querySelectorAll("button").forEach(b=>b.classList.remove("active"));
-            btn.classList.add("active");
-            cb(btn.dataset.name);
+            // 👉 เพิ่มเงื่อนไข: ถ้าปุ่มนั้นมีคลาส active อยู่แล้ว (แปลว่าถูกเลือกอยู่) ให้เอาออก
+            if (btn.classList.contains("active")) {
+                btn.classList.remove("active");
+                cb(null); // คืนค่าตัวแปรกลับเป็น null
+            } else {
+                // ถ้ายังไม่ถูกเลือก ก็ให้ล้างอันอื่นออก แล้วไฮไลท์อันที่คลิก
+                document.getElementById(id).querySelectorAll("button").forEach(b=>b.classList.remove("active"));
+                btn.classList.add("active");
+                cb(btn.dataset.name);
+            }
         };
     });
 }
@@ -111,8 +118,18 @@ function addNoodle(){
 
     mergeItem(newItem);
     document.getElementById("qty").value=1;
-    // เคลียร์ค่าเนื้อที่ถูกติ๊ก (ยกเว้นอันที่ถูกล็อกพังไว้)
+    
+    // เคลียร์ค่าเส้นและซุป (เผื่อลูกค้าจะสั่งชามต่อไป)
+    selectedNoodle = null;
+    selectedSoup = null;
+    document.querySelectorAll("#noodles button, #soups button").forEach(b => b.classList.remove("active"));
+
+    // เคลียร์ค่าเนื้อที่ถูกติ๊ก 
     document.querySelectorAll(".meat:not([disabled])").forEach(m=>m.checked=false);
+    
+    // 👉 เพิ่มบรรทัดนี้: เพื่อล้างกรอบสีส้มออกจากการ์ดเนื้อสัตว์ทั้งหมด
+    document.querySelectorAll(".meat-card").forEach(card => card.classList.remove("active"));
+
     showToast("เพิ่มรายการแล้ว");
 }
 
@@ -296,9 +313,23 @@ function applyDisabledMenuItems() {
         }
     });
 }
+// 👉 เพิ่มฟังก์ชันจัดการ UI การเลือกเนื้อสัตว์
+function setupMeatSelection() {
+    document.querySelectorAll('.meat').forEach(checkbox => {
+        checkbox.addEventListener('change', function() {
+            const card = this.closest('.meat-card'); // หาการ์ดที่ครอบ Checkbox นี้อยู่
+            if (this.checked) {
+                card.classList.add('active'); // ใส่กรอบส้ม
+            } else {
+                card.classList.remove('active'); // เอากรอบส้มออก
+            }
+        });
+    });
+}
 
-// โหลดฟังก์ชันทั้งหมดเมื่อเปิดหน้าเว็บ
+// 👉 แก้ไข window.onload เดิม ให้เรียก setupMeatSelection() ด้วย
 window.onload = function() {
     checkOldStatus();
-    applyDisabledMenuItems(); // สั่งรันฟังก์ชันปิดเมนู
+    applyDisabledMenuItems();
+    setupMeatSelection(); // <--- เพิ่มบรรทัดนี้เข้าไป
 };

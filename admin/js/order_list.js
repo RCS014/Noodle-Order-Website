@@ -19,16 +19,20 @@
         // ฟังก์ชันแปลงเวลาเป็นรูปแบบไทย
         // =====================================
         function formatThaiDate(timestamp) {
-            if (!timestamp) return "-";
-            const date = new Date(timestamp);
+            let ts = Number(timestamp);
+    
+            // 🛡️ ยันต์กันบั๊ก 1 ม.ค. 13: ถ้าเลขเวลาน้อยผิดปกติ (เช่น เลข 1,2,3) ให้บังคับใช้เวลา ณ ปัจจุบันเลย
+            if (!ts || ts < 1000000000000) {
+                ts = Date.now(); 
+            }
+
+            const date = new Date(ts);
             const months = ["ม.ค.", "ก.พ.", "มี.ค.", "เม.ย.", "พ.ค.", "มิ.ย.", "ก.ค.", "ส.ค.", "ก.ย.", "ต.ค.", "พ.ย.", "ธ.ค."];
-            
             const day = date.getDate();
             const month = months[date.getMonth()];
-            const year = (date.getFullYear() + 543).toString().slice(-2); // เอา พ.ศ. 2 ตัวท้าย
+            const year = (date.getFullYear() + 543).toString().slice(-2);
             const hours = String(date.getHours()).padStart(2, '0');
             const mins = String(date.getMinutes()).padStart(2, '0');
-            
             return `${day} ${month} ${year} , ${hours}:${mins}`;
         }
 
