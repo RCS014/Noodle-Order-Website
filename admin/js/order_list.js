@@ -12,25 +12,26 @@ mobileMenuBtn.addEventListener('click', toggleSidebar);
 closeSidebarBtn.addEventListener('click', toggleSidebar);
 overlay.addEventListener('click', toggleSidebar);
 
-function formatThaiDate(timestamp) {
-    if (!timestamp) return "-";
+        // =====================================
+        // ฟังก์ชันแปลงเวลาเป็นรูปแบบไทย
+        // =====================================
+        function formatThaiDate(timestamp) {
+            let ts = Number(timestamp);
     
-    let ts = Number(timestamp);
-    
-    // 👉 ตัวดักจับบั๊ก: ถ้าค่าน้อยกว่าปีปัจจุบัน แสดงว่าเป็นเลขคิวพังๆ จากบั๊กเก่า
-    if (ts < 1000000000000) {
-        return '<span class="text-rose-500 font-bold">ข้อมูลบั๊ก (ให้ลบทิ้ง)</span>';
-    }
+            // 🛡️ ยันต์กันบั๊ก 1 ม.ค. 13: ถ้าเลขเวลาน้อยผิดปกติ (เช่น เลข 1,2,3) ให้บังคับใช้เวลา ณ ปัจจุบันเลย
+            if (!ts || ts < 1000000000000) {
+                ts = Date.now(); 
+            }
 
-    const date = new Date(ts);
-    const months = ["ม.ค.", "ก.พ.", "มี.ค.", "เม.ย.", "พ.ค.", "มิ.ย.", "ก.ค.", "ส.ค.", "ก.ย.", "ต.ค.", "พ.ย.", "ธ.ค."];
-    const day = date.getDate();
-    const month = months[date.getMonth()];
-    const year = (date.getFullYear() + 543).toString().slice(-2);
-    const hours = String(date.getHours()).padStart(2, '0');
-    const mins = String(date.getMinutes()).padStart(2, '0');
-    return `${day} ${month} ${year} , ${hours}:${mins}`;
-}
+            const date = new Date(ts);
+            const months = ["ม.ค.", "ก.พ.", "มี.ค.", "เม.ย.", "พ.ค.", "มิ.ย.", "ก.ค.", "ส.ค.", "ก.ย.", "ต.ค.", "พ.ย.", "ธ.ค."];
+            const day = date.getDate();
+            const month = months[date.getMonth()];
+            const year = (date.getFullYear() + 543).toString().slice(-2);
+            const hours = String(date.getHours()).padStart(2, '0');
+            const mins = String(date.getMinutes()).padStart(2, '0');
+            return `${day} ${month} ${year} , ${hours}:${mins}`;
+        }
 
 // โหลดข้อมูลกระดานคิว
 function getOrders(){
@@ -72,7 +73,7 @@ function renderAdmin(){
 
     let grouped = groupByQueue(orders);
     let sortedQueues = Object.keys(grouped).sort((a,b) => Number(a) - Number(b)); 
-    let queueNumberDisplay = 1; 
+    let waitingNumber = 1;
 
     sortedQueues.forEach(queue => {
         let table = grouped[queue][0].table;
@@ -82,7 +83,6 @@ function renderAdmin(){
         let itemsHTML="";
         
         grouped[queue].forEach((item,index)=>{
-            // 🔴 แก้ตรงนี้: เปลี่ยนจาก item.queue เป็น item.time 
             let timeString = formatThaiDate(item.time); 
             let sizeStr = item.sizeName ? `${item.sizeName}<br>` : "";
             let spicyStr = item.spicy ? `🌶 ${item.spicy}<br>` : "";
@@ -117,9 +117,14 @@ function renderAdmin(){
         if(grouped[queue].some(i => i.status === "รอคิว")) mainStatus = "รอคิว";
         else if(grouped[queue].some(i => i.status === "กำลังทำ")) mainStatus = "กำลังทำ";
 
-        tableBox.innerHTML=`
+        // 👉 แก้ตรงนี้: ดึงเลขคิวของจริงจากฐานข้อมูลมาโชว์ (ให้ตรงกับหน้าลูกค้าเป๊ะๆ)
+        let realQueue = grouped[queue][0].queue;
+        let queueTitle = `คิว <span class="text-primary">${realQueue}</span>`;
+
+        tableBox.innerHTML = `
         <div class="flex justify-between items-center mb-4 pb-2 border-b border-slate-100 dark:border-slate-800">
-            <h2 class="font-black text-2xl text-slate-900 dark:text-white">คิว <span class="text-primary">${queueNumberDisplay++}</span>
+            <h2 class="font-black text-2xl text-slate-900 dark:text-white">
+            ${queueTitle}
             <span class="ml-2 bg-orange-500 text-white px-3 py-1 rounded-lg text-sm">
             โต๊ะ ${table}
             </span></h2>
@@ -128,7 +133,7 @@ function renderAdmin(){
         <div class="flex gap-3 mt-4 pt-2">
 
         ${mainStatus==="รอคิว" ? `
-        <button onclick="receiveQueue('${queue}')" class="flex-1 bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 rounded-xl shadow-md">
+        <button onclick="receiveQueue('${queue}')" class="flex-1 bg-primary hover:bg-primary/90 text-white font-bold py-3 rounded-xl shadow-md">
             รับคิว
         </button>` : ``}
 
@@ -180,21 +185,41 @@ function markReady(queueId){
     renderAdmin();
 }
 
-// จบออเดอร์ (โต๊ะกินเสร็จ/จ่ายเงิน) - ย้ายไป History เป็นสถานะ "เสิร์ฟแล้ว"
-function finishTable(queueId){
-    if(confirm(`ยืนยันการจบออเดอร์ (ลูกค้าจ่ายเงินแล้ว)?`)){
+let tableToFinish = null; // ตัวแปรเก็บค่าว่าจะจบออเดอร์ของคิวไหน
+
+// 1. กดปุ่มจบออเดอร์สีเขียว -> ให้เด้ง Pop-up ขึ้นมา
+function finishTable(timeKey) {
+    tableToFinish = timeKey;
+    let modal = document.getElementById('finish-order-modal');
+    if (modal) modal.classList.remove('hidden');
+}
+
+// 2. กดปุ่มยกเลิกใน Pop-up -> ปิด Pop-up
+function closeFinishTableModal() {
+    let modal = document.getElementById('finish-order-modal');
+    if (modal) modal.classList.add('hidden');
+    tableToFinish = null;
+}
+
+// 3. กดปุ่มยืนยันใน Pop-up -> ทำการจบออเดอร์ ย้ายไปประวัติ
+function confirmFinishTableAction() {
+    if (tableToFinish !== null) {
         let orders = getOrders();
         let history = JSON.parse(localStorage.getItem("orderHistory")) || [];
         
-        let tableOrders = orders.filter(o => String(o.queue) === String(queueId));
+        // 👉 แก้ไขตรงนี้: สั่งให้ค้นหาครอบคลุมทั้งคิว (queue) และเวลา (time) 
+        let tableOrders = orders.filter(o => String(o.queue) === String(tableToFinish) || String(o.time) === String(tableToFinish));
         tableOrders.forEach(o => o.status = "เสิร์ฟแล้ว");
         
         history = history.concat(tableOrders);
         localStorage.setItem("orderHistory", JSON.stringify(history));
         
-        orders = orders.filter(o => String(o.queue) !== String(queueId));
+        // 👉 แก้ไขตรงนี้: ลบออเดอร์ออกจากกระดานคิว
+        orders = orders.filter(o => String(o.queue) !== String(tableToFinish) && String(o.time) !== String(tableToFinish));
         saveOrders(orders);
-        renderAdmin();
+        
+        renderAdmin(); // โหลดหน้าจอใหม่
+        closeFinishTableModal(); // ปิด Pop-up
     }
 }
 
@@ -223,7 +248,7 @@ function confirmDeleteAction() {
         let orders = getOrders();
         let history = JSON.parse(localStorage.getItem("orderHistory")) || [];
         
-        let tableOrders = orders.filter(o => String(o.queue) === String(queueToDelete));
+        orders = orders.filter(o => String(o.queue) !== String(queueToDelete) && String(o.time) !== String(queueToDelete));
         
         // 🔴 สำคัญ: ต้องเปลี่ยนสถานะเป็น "ยกเลิก" ก่อนย้ายไป History 
         // ไม่งั้น History จะมองไม่เห็น หรือดึงไปแสดงผิดสี
@@ -261,7 +286,45 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
-// เริ่มการทำงาน
+let finishOrderIndex = null;
+
+function openFinishPopup(index){
+finishOrderIndex = index;
+document.getElementById("finishPopup").classList.remove("hidden");
+
+        if(mainStatus === "รอคิว") waitingBox.appendChild(tableBox);
+        else if(mainStatus === "กำลังทำ") cookingBox.appendChild(tableBox);
+        else doneBox.appendChild(tableBox);
+    };
+
+
+function closeFinishPopup(){
+
+document.getElementById("finishPopup").classList.add("hidden");
+
+finishOrderIndex = null;
+
+}
+
+function confirmFinishOrder(){
+
+let orders = JSON.parse(localStorage.getItem("currentOrders")) || [];
+
+if(finishOrderIndex !== null){
+
+orders.splice(finishOrderIndex,1);
+
+localStorage.setItem("currentOrders",JSON.stringify(orders));
+
+}
+
+closeFinishPopup();
+
+location.reload();
+
+}
+
+
 renderAdmin();
 setInterval(renderAdmin, 3000);
 window.addEventListener("storage",renderAdmin);

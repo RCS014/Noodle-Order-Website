@@ -125,6 +125,35 @@ function setupPagination() {
     }
 }
 
+// 1. กดปุ่มล้างประวัติ -> ให้เด้ง Pop-up ขึ้นมา
+function clearHistory() {
+    let modal = document.getElementById('clear-history-modal');
+    if (modal) modal.classList.remove('hidden');
+}
+
+// 2. กดปุ่มยกเลิกใน Pop-up -> ปิด Pop-up
+function closeClearHistoryModal() {
+    let modal = document.getElementById('clear-history-modal');
+    if (modal) modal.classList.add('hidden');
+}
+
+// 3. กดปุ่มยืนยันใน Pop-up -> ลบข้อมูลและโชว์ Toast แจ้งเตือน
+function confirmClearHistoryAction() {
+    // ลบเฉพาะประวัติ
+    localStorage.removeItem("orderHistory"); 
+    currentPage = 1;
+    renderHistory(); // รีเฟรชหน้าจอให้ว่างเปล่า
+    closeClearHistoryModal(); // ปิด Pop-up
+    
+    // โชว์ Toast แจ้งเตือน (แทน alert)
+    const toast = document.getElementById("success-toast");
+    if(toast) {
+        toast.classList.remove("hidden");
+        // สั่งให้หายไปเองภายใน 2.5 วินาที
+        setTimeout(() => toast.classList.add("hidden"), 2500);
+    }
+}
+
 window.onload = function() {
     renderHistory();
     // รีเฟรชแบบเงียบๆ ทุกๆ 3 วินาที เพื่อดูออเดอร์เข้าใหม่แบบ Real-time

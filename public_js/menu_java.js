@@ -8,7 +8,7 @@ let disabledItems = JSON.parse(localStorage.getItem('disabledMenuItems')) || [];
 
 /* ===== ระบบเครื่องเคียงครบ ===== */
 const sides=[
-{name:"ผักบุ้งลวก",price:10},
+{name:"ผักบุ้งลวก",price:55},
 {name:"กากหมู",price:20},
 {name:"หมูลวก",price:60},
 {name:"แคปหมู",price:20},
@@ -35,9 +35,9 @@ sides.forEach((item,i)=>{
             </label>
         </div>
         <div class="flex items-center gap-2 pl-6">
-            <button onclick="changeSideQty(${i},-1)" class="bg-gray-200 w-9 h-9 rounded-lg" ${isOut ? 'disabled' : ''}>➖</button>
+            <button onclick="changeSideQty(${i},-1)" class="bg-gray-200 w-9 h-9 rounded-lg" ${isOut ? 'disabled' : ''}>-</button>
             <input type="number" id="qty${i}" value="1" min="1" class="w-16 text-center border rounded p-1" ${isOut ? 'disabled' : ''}>
-            <button onclick="changeSideQty(${i},1)" class="bg-gray-200 w-9 h-9 rounded-lg" ${isOut ? 'disabled' : ''}>➕</button>
+            <button onclick="changeSideQty(${i},1)" class="bg-gray-200 w-9 h-9 rounded-lg" ${isOut ? 'disabled' : ''}>+</button>
         </div>
     </div>`;
 });
@@ -57,12 +57,19 @@ function switchPage(p){
 function singleSelect(id,cb){
     document.getElementById(id).querySelectorAll("button").forEach(btn=>{
         btn.onclick=()=>{
-            // 4. 👉 ป้องกันไม่ให้ลูกค้าคลิกเลือกปุ่มที่ของหมดแล้วได้
+            // ป้องกันไม่ให้ลูกค้าคลิกเลือกปุ่มที่ของหมดแล้วได้
             if(btn.hasAttribute('disabled')) return;
             
-            document.getElementById(id).querySelectorAll("button").forEach(b=>b.classList.remove("active"));
-            btn.classList.add("active");
-            cb(btn.dataset.name);
+            // 👉 เพิ่มเงื่อนไข: ถ้าปุ่มนั้นมีคลาส active อยู่แล้ว (แปลว่าถูกเลือกอยู่) ให้เอาออก
+            if (btn.classList.contains("active")) {
+                btn.classList.remove("active");
+                cb(null); // คืนค่าตัวแปรกลับเป็น null
+            } else {
+                // ถ้ายังไม่ถูกเลือก ก็ให้ล้างอันอื่นออก แล้วไฮไลท์อันที่คลิก
+                document.getElementById(id).querySelectorAll("button").forEach(b=>b.classList.remove("active"));
+                btn.classList.add("active");
+                cb(btn.dataset.name);
+            }
         };
     });
 }
@@ -114,32 +121,19 @@ function addNoodle(){
 
     // 4. โยนเข้าตะกร้า
     mergeItem(newItem);
-
-    // ==========================================
-    // 🧹 ส่วนที่เพิ่มเข้ามา: รีเซ็ตค่าทั้งหมดกลับเป็นค่าเริ่มต้น
-    // ==========================================
-
-    // รีเซ็ตตัวแปรเส้นและน้ำซุป
+    document.getElementById("qty").value=1;
+    
+    // เคลียร์ค่าเส้นและซุป (เผื่อลูกค้าจะสั่งชามต่อไป)
     selectedNoodle = null;
     selectedSoup = null;
+    document.querySelectorAll("#noodles button, #soups button").forEach(b => b.classList.remove("active"));
 
-    // ล้างสีส้ม (active) ออกจากปุ่มเส้นและน้ำซุปทั้งหมด
-    document.querySelectorAll("#noodles button, #soups button").forEach(btn => {
-        btn.classList.remove("active");
-    });
+    // เคลียร์ค่าเนื้อที่ถูกติ๊ก 
+    document.querySelectorAll(".meat:not([disabled])").forEach(m=>m.checked=false);
+    
+    // 👉 เพิ่มบรรทัดนี้: เพื่อล้างกรอบสีส้มออกจากการ์ดเนื้อสัตว์ทั้งหมด
+    document.querySelectorAll(".meat-card").forEach(card => card.classList.remove("active"));
 
-    // ล้างการติ๊กถูกที่ช่องเลือกเนื้อ (ยกเว้นอันที่วัตถุดิบหมดและโดนล็อกไว้)
-    document.querySelectorAll(".meat:not([disabled])").forEach(m => m.checked = false);
-
-    // รีเซ็ตเมนู Dropdown (ผัก, ความเผ็ด, ขนาด) ให้กลับไปเป็นตัวเลือกแรกสุด
-    document.getElementById("vegetable").selectedIndex = 0;
-    document.getElementById("spicy").selectedIndex = 0;
-    document.getElementById("size").selectedIndex = 0;
-
-    // รีเซ็ตจำนวนชามกลับมาเป็น 1
-    document.getElementById("qty").value = 1;
-
-    // แสดงข้อความแจ้งเตือน
     showToast("เพิ่มรายการแล้ว");
 }
 
@@ -315,6 +309,7 @@ function applyDisabledMenuItems() {
         }
     });
 
+
     // ปิดกั้นช่องติ๊กถูกเลือก เนื้อสัตว์
     document.querySelectorAll('.meat').forEach(checkbox => {
         let itemName = checkbox.value;
@@ -326,9 +321,23 @@ function applyDisabledMenuItems() {
         }
     });
 }
+// 👉 เพิ่มฟังก์ชันจัดการ UI การเลือกเนื้อสัตว์
+function setupMeatSelection() {
+    document.querySelectorAll('.meat').forEach(checkbox => {
+        checkbox.addEventListener('change', function() {
+            const card = this.closest('.meat-card'); // หาการ์ดที่ครอบ Checkbox นี้อยู่
+            if (this.checked) {
+                card.classList.add('active'); // ใส่กรอบส้ม
+            } else {
+                card.classList.remove('active'); // เอากรอบส้มออก
+            }
+        });
+    });
+}
 
-// โหลดฟังก์ชันทั้งหมดเมื่อเปิดหน้าเว็บ
+// 👉 แก้ไข window.onload เดิม ให้เรียก setupMeatSelection() ด้วย
 window.onload = function() {
     checkOldStatus();
-    applyDisabledMenuItems(); // สั่งรันฟังก์ชันปิดเมนู
+    applyDisabledMenuItems();
+    setupMeatSelection(); // <--- เพิ่มบรรทัดนี้เข้าไป
 };

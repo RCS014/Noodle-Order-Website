@@ -11,6 +11,124 @@
 <style>
 body{font-family:'Kanit',sans-serif}
 .active{background:#ea580c;color:white;border-color:#ea580c}
+
+.noodle-card{
+background:white;
+transition:all .25s ease;
+cursor:pointer;
+overflow:hidden;
+}
+
+.noodle-card:hover{
+transform:translateY(-4px);
+box-shadow:0 8px 20px rgba(0,0,0,.15);
+}
+
+.noodle-card img{
+transition:.25s;
+}
+
+.noodle-card:hover img{
+transform:scale(1.05);
+}
+
+/* ตอนเลือก */
+.noodle-card.active{
+border:2px solid #ea580c;
+background:#fff7ed;
+transform:scale(1.03);
+color:#ea580c
+}
+
+/* เครื่องหมายถูก */
+.checkmark{
+position:absolute;
+top:6px;
+right:6px;
+background:#ea580c;
+color:white;
+width:22px;
+height:22px;
+border-radius:50%;
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:14px;
+opacity:0;
+transform:scale(0);
+transition:.2s;
+}
+
+/* แสดง ✓ */
+.noodle-card.active .checkmark{
+opacity:1;
+transform:scale(1);
+}
+
+.meat-card{
+background:white;
+transition:all .25s ease;
+overflow:hidden;
+}
+
+.meat-card:hover{
+transform:translateY(-4px);
+box-shadow:0 8px 20px rgba(0,0,0,.15);
+}
+
+.meat-card img{
+transition:.25s;
+}
+
+.meat-card:hover img{
+transform:scale(1.05);
+}
+
+/* ตอนเลือก */
+.meat-card.active{
+border:2px solid #ea580c;
+background:#fff7ed;
+transform:scale(1.03);
+color:#ea580c
+}
+
+/* ✓ */
+.checkmark{
+position:absolute;
+top:6px;
+right:6px;
+background:#ea580c;
+color:white;
+width:22px;
+height:22px;
+border-radius:50%;
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:14px;
+opacity:0;
+transform:scale(0);
+transition:.2s;
+}
+
+.meat-card.active .checkmark{
+opacity:1;
+transform:scale(1);
+}
+
+body{
+font-family:'Kanit',sans-serif
+}
+body{
+    /* ลายพื้นหลัง */
+    background-image: 
+        radial-gradient(circle at center, #e8d8c3 3px, transparent 4px),
+        radial-gradient(circle at center, #e8d8c3 3px, transparent 4px);
+    background-size: 80px 80px;
+    background-position: 0 0, 40px 40px;
+}
+
+
 </style>
 </head>
 
@@ -52,17 +170,122 @@ class="fixed bottom-5 right-5 sm:bottom-6 sm:right-6 bg-orange-600 hover:bg-oran
 <option value="3">โต๊ะ 3</option>
 <option value="4">โต๊ะ 4</option>
 <option value="5">โต๊ะ 5</option>
+<option value="หน้าเคาน์เตอร์">หน้าเคาน์เตอร์ (สั่งกลับบ้าน)</option>
 </select>
 </div>
 
 <div>
 <h3 class="font-semibold mb-2">เลือกเส้น</h3>
+
 <div class="grid grid-cols-2 md:grid-cols-3 gap-3" id="noodles">
-<button class="border rounded-lg p-2 hover:bg-orange-100" data-name="เส้นเล็ก">เส้นเล็ก</button>
-<button class="border rounded-lg p-2 hover:bg-orange-100" data-name="เส้นหมี่">เส้นหมี่</button>
-<button class="border rounded-lg p-2 hover:bg-orange-100" data-name="เส้นใหญ่">เส้นใหญ่</button>
-<button class="border rounded-lg p-2 hover:bg-orange-100" data-name="บะหมี่">บะหมี่</button>
-<button class="border rounded-lg p-2 hover:bg-orange-100" data-name="วุ้นเส้น">วุ้นเส้น</button>
+
+<button class="noodle-card border rounded-xl p-3 flex flex-col items-center gap-2 relative" data-name="เส้นเล็ก">
+<img src="img/sen-lek.jpg" class="w-full h-20 object-cover rounded-lg">
+<span>เส้นเล็ก</span>
+<div class="checkmark">✓</div>
+</button>
+
+<button class="noodle-card border rounded-xl p-3 flex flex-col items-center gap-2 relative" data-name="เส้นหมี่">
+<img src="img/sen-mii.jpg" class="w-full h-20 object-cover rounded-lg">
+<span>เส้นหมี่</span>
+<div class="checkmark">✓</div>
+</button>
+
+<button class="noodle-card border rounded-xl p-3 flex flex-col items-center gap-2 relative" data-name="เส้นใหญ่">
+<img src="img/sen-yai.jpg" class="w-full h-20 object-cover rounded-lg">
+<span>เส้นใหญ่</span>
+<div class="checkmark">✓</div>
+</button>
+
+<button class="noodle-card border rounded-xl p-3 flex flex-col items-center gap-2 relative" data-name="บะหมี่">
+<img src="img/ba-mii.jpg" class="w-full h-20 object-cover rounded-lg">
+<span>บะหมี่</span>
+<div class="checkmark">✓</div>
+</button>
+
+<button class="noodle-card border rounded-xl p-3 flex flex-col items-center gap-2 relative" data-name="วุ้นเส้น">
+<img src="img/wun-sen.jpg" class="w-full h-20 object-cover rounded-lg">
+<span>วุ้นเส้น</span>
+<div class="checkmark">✓</div>
+</button>
+</div>
+</div>
+
+
+<!-- เพิ่มเลือกเนื้อ -->
+<div>
+<h3 class="font-semibold mb-2">กรุณาเลือกเนื้อ (เลือกได้หลายตัวเลือก)</h3>
+
+<div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+
+<label class="meat-card relative border rounded-xl p-3 flex flex-col items-center gap-2 cursor-pointer">
+
+<input type="checkbox" class="meat hidden" value="ไม่ต้องการเนื้อ">
+
+<img src="/img/nothing.jpg"
+class="w-full h-20 object-cover rounded-lg">
+
+<span>ไม่ต้องการเนื้อ</span>
+
+<div class="checkmark">✓</div>
+
+</label>
+
+
+<label class="meat-card relative border rounded-xl p-3 flex flex-col items-center gap-2 cursor-pointer">
+
+<input type="checkbox" class="meat hidden" value="หมูสด">
+
+<img src="img/pork.jpg"
+class="w-full h-20 object-cover rounded-lg">
+
+<span>หมูสด</span>
+
+<div class="checkmark">✓</div>
+
+</label>
+
+
+<label class="meat-card relative border rounded-xl p-3 flex flex-col items-center gap-2 cursor-pointer">
+
+<input type="checkbox" class="meat hidden" value="เนื้อสด">
+
+<img src="img/beef.jpg"
+class="w-full h-20 object-cover rounded-lg">
+
+<span>เนื้อสด</span>
+
+<div class="checkmark">✓</div>
+
+</label>
+
+
+<label class="meat-card relative border rounded-xl p-3 flex flex-col items-center gap-2 cursor-pointer">
+
+<input type="checkbox" class="meat hidden" value="ตับ">
+
+<img src="img/liver.jpg"
+class="w-full h-20 object-cover rounded-lg">
+
+<span>ตับ</span>
+
+<div class="checkmark">✓</div>
+
+</label>
+
+
+<label class="meat-card relative border rounded-xl p-3 flex flex-col items-center gap-2 cursor-pointer">
+
+<input type="checkbox" class="meat hidden" value="ลูกชิ้น">
+
+<img src="img/meatball.jpg"
+class="w-full h-20 object-cover rounded-lg">
+
+<span>ลูกชิ้น</span>
+
+<div class="checkmark">✓</div>
+
+</label>
 </div>
 </div>
 
@@ -76,23 +299,15 @@ class="fixed bottom-5 right-5 sm:bottom-6 sm:right-6 bg-orange-600 hover:bg-oran
 </div>
 </div>
 
-<!-- เพิ่มเลือกเนื้อ -->
-<div>
-<h3 class="font-semibold mb-2">เลือกเนื้อ (เลือกได้หลายตัว)</h3>
-<div class="grid grid-cols-2 md:grid-cols-4 gap-2">
-<label><input type="checkbox" class="meat" value="หมูสด"> หมูสด</label>
-<label><input type="checkbox" class="meat" value="เนื้อสด"> เนื้อสด</label>
-<label><input type="checkbox" class="meat" value="ตับ"> ตับ</label>
-<label><input type="checkbox" class="meat" value="ลูกชิ้น"> ลูกชิ้น</label>
-</div>
-</div>
 
 <!-- เพิ่มเลือกผัก -->
 <div>
-<h3 class="font-semibold mb-2">ผัก</h3>
+<h3 class="font-semibold mb-2">เลือกผัก (ผักบุ้ง/ถั่วงอก)</h3>
 <select id="vegetable" class="w-full border rounded-lg p-2">
-<option value="ใส่ผัก">ไม่ใส่ผัก</option>
-<option value="ไม่ใส่ผัก">ใส่ผัก</option>
+<option value="ไม่ใส่ผัก">ไม่ใส่ผัก</option>
+<option value="ใส่ผักบุ้งอย่างเดียว">ใส่ผักบุ้งอย่างเดียว</option>
+<option value="ใส่ถั่วงอกอย่างเดียว">ใส่ถั่วงอกอย่างเดียว</option>
+<option value="ใส่ผักทั้งสอง">ใส่ผักทั้งสอง</option>
 </select>
 </div>
 
@@ -128,7 +343,11 @@ class="w-20 text-center border rounded-lg p-2">
 </div>
 
 <button onclick="addNoodle()" class="w-full bg-orange-600 text-white p-3 rounded-xl font-semibold hover:bg-orange-700 transition">
+<<<<<<< HEAD
 เพิ่มรายการลงตะกร้า
+=======
+เพิ่มรายการก๋วยเตี๋ยวลงตะกร้า
+>>>>>>> Zainluv
 </button>
 
 </div>
@@ -136,11 +355,11 @@ class="w-20 text-center border rounded-lg p-2">
 <!-- ================= PAGE SIDE ================= -->
 <div id="sidePage" class="hidden space-y-6 bg-white p-4 sm:p-6 rounded-2xl shadow-md">
 
-<h3 class="font-semibold text-lg">เลือกเครื่องเคียง</h3>
+<h3 class="font-semibold text-lg">รายการเครื่องเคียง</h3>
 <div id="sideMenu" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
 
 <button onclick="confirmSides()" class="w-full bg-orange-600 text-white p-3 rounded-xl font-semibold hover:bg-orange-700 transition">
-เพิ่มเครื่องเคียงลงตะกร้า
+เพิ่มรายการเครื่องเคียงลงตะกร้า
 </button>
 
 </div>
