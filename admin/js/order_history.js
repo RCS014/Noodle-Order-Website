@@ -125,20 +125,32 @@ function setupPagination() {
     }
 }
 
+// 1. กดปุ่มล้างประวัติ -> ให้เด้ง Pop-up ขึ้นมา
 function clearHistory() {
-    // 1. เด้งถามเพื่อป้องกันการเผลอกดโดน
-    if(confirm("⚠️ คุณแน่ใจหรือไม่ว่าต้องการ 'ล้างประวัติทั้งหมด'?\n\n(ระบบจะลบเฉพาะออเดอร์ที่ 'เสิร์ฟแล้ว' และ 'ยกเลิก' เท่านั้น คิวที่กำลังทำงานอยู่จะไม่หาย)")) {
-        
-        // 2. สั่งลบเฉพาะความจำฝั่ง "ประวัติ" ทิ้ง (ไม่ยุ่งกับ currentOrders)
-        localStorage.removeItem("orderHistory"); 
-        
-        // 3. รีเซ็ตหน้ากระดาษกลับไปหน้า 1
-        currentPage = 1;
-        
-        // 4. สั่งให้หน้าระบบโหลดข้อมูลใหม่ทันที (รายการเก่าจะหายวับไป)
-        renderHistory(); 
-        
-        alert("ล้างประวัติเรียบร้อยแล้วครับ!");
+    let modal = document.getElementById('clear-history-modal');
+    if (modal) modal.classList.remove('hidden');
+}
+
+// 2. กดปุ่มยกเลิกใน Pop-up -> ปิด Pop-up
+function closeClearHistoryModal() {
+    let modal = document.getElementById('clear-history-modal');
+    if (modal) modal.classList.add('hidden');
+}
+
+// 3. กดปุ่มยืนยันใน Pop-up -> ลบข้อมูลและโชว์ Toast แจ้งเตือน
+function confirmClearHistoryAction() {
+    // ลบเฉพาะประวัติ
+    localStorage.removeItem("orderHistory"); 
+    currentPage = 1;
+    renderHistory(); // รีเฟรชหน้าจอให้ว่างเปล่า
+    closeClearHistoryModal(); // ปิด Pop-up
+    
+    // โชว์ Toast แจ้งเตือน (แทน alert)
+    const toast = document.getElementById("success-toast");
+    if(toast) {
+        toast.classList.remove("hidden");
+        // สั่งให้หายไปเองภายใน 2.5 วินาที
+        setTimeout(() => toast.classList.add("hidden"), 2500);
     }
 }
 

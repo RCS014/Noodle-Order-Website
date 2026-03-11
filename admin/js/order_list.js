@@ -185,21 +185,41 @@ function markReady(queueId){
     renderAdmin();
 }
 
-// จบออเดอร์ (โต๊ะกินเสร็จ/จ่ายเงิน) - ย้ายไป History เป็นสถานะ "เสิร์ฟแล้ว"
-function finishTable(queueId){
-    if(confirm(`ยืนยันการจบออเดอร์ (ลูกค้าจ่ายเงินแล้ว)?`)){
+let tableToFinish = null; // ตัวแปรเก็บค่าว่าจะจบออเดอร์ของคิวไหน
+
+// 1. กดปุ่มจบออเดอร์สีเขียว -> ให้เด้ง Pop-up ขึ้นมา
+function finishTable(timeKey) {
+    tableToFinish = timeKey;
+    let modal = document.getElementById('finish-order-modal');
+    if (modal) modal.classList.remove('hidden');
+}
+
+// 2. กดปุ่มยกเลิกใน Pop-up -> ปิด Pop-up
+function closeFinishTableModal() {
+    let modal = document.getElementById('finish-order-modal');
+    if (modal) modal.classList.add('hidden');
+    tableToFinish = null;
+}
+
+// 3. กดปุ่มยืนยันใน Pop-up -> ทำการจบออเดอร์ ย้ายไปประวัติ
+function confirmFinishTableAction() {
+    if (tableToFinish !== null) {
         let orders = getOrders();
         let history = JSON.parse(localStorage.getItem("orderHistory")) || [];
         
-        let tableOrders = orders.filter(o => String(o.queue) === String(queueId));
+        // 👉 แก้ไขตรงนี้: สั่งให้ค้นหาครอบคลุมทั้งคิว (queue) และเวลา (time) 
+        let tableOrders = orders.filter(o => String(o.queue) === String(tableToFinish) || String(o.time) === String(tableToFinish));
         tableOrders.forEach(o => o.status = "เสิร์ฟแล้ว");
         
         history = history.concat(tableOrders);
         localStorage.setItem("orderHistory", JSON.stringify(history));
         
-        orders = orders.filter(o => String(o.queue) !== String(queueId));
+        // 👉 แก้ไขตรงนี้: ลบออเดอร์ออกจากกระดานคิว
+        orders = orders.filter(o => String(o.queue) !== String(tableToFinish) && String(o.time) !== String(tableToFinish));
         saveOrders(orders);
-        renderAdmin();
+        
+        renderAdmin(); // โหลดหน้าจอใหม่
+        closeFinishTableModal(); // ปิด Pop-up
     }
 }
 
@@ -228,7 +248,7 @@ function confirmDeleteAction() {
         let orders = getOrders();
         let history = JSON.parse(localStorage.getItem("orderHistory")) || [];
         
-        let tableOrders = orders.filter(o => String(o.queue) === String(queueToDelete));
+        orders = orders.filter(o => String(o.queue) !== String(queueToDelete) && String(o.time) !== String(queueToDelete));
         
         // 🔴 สำคัญ: ต้องเปลี่ยนสถานะเป็น "ยกเลิก" ก่อนย้ายไป History 
         // ไม่งั้น History จะมองไม่เห็น หรือดึงไปแสดงผิดสี

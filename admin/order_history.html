@@ -13,7 +13,7 @@
         tailwind.config = { darkMode: "class", theme: { extend: { colors: { "primary": "#ec5b13", "background-light": "#f8f6f6", "background-dark": "#221610" }, fontFamily: { "display": ["Public Sans", "Sarabun", "sans-serif"] }, borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" } } } }
     </script>
     <style>
-        main, aside { font-family: 'Kanit'; }
+        main, aside, popUp { font-family: 'Kanit'; }
         .noodle-pattern { background-color: #f8f6f6; background-image: radial-gradient(#ec5b13 0.5px, transparent 0.5px), radial-gradient(#ec5b13 0.5px, #f8f6f6 0.5px); background-size: 20px 20px; background-position: 0 0, 10px 10px; opacity: 0.05; }
         body{
 font-family:'Kanit',sans-serif
@@ -97,6 +97,34 @@ body{
             <div id="pagination-container" class="flex justify-center items-center gap-3 mt-8"></div>
         </main>
     </div>
+
+    <popUp id="clear-history-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[60] hidden flex items-center justify-center transition-opacity">
+        <div class="bg-white dark:bg-slate-900 rounded-2xl p-6 max-w-sm w-full mx-4 shadow-2xl">
+            <div class="flex items-center gap-4 mb-4">
+                <div class="w-12 h-12 rounded-full bg-rose-100 text-rose-500 flex items-center justify-center shrink-0">
+                    <span class="material-symbols-outlined text-2xl">warning</span>
+                </div>
+                <div>
+                    <h3 class="text-xl font-bold text-slate-900 dark:text-white">ล้างประวัติทั้งหมด</h3>
+                    <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">คุณแน่ใจหรือไม่? (รายการที่กำลังทำจะไม่ถูกลบ)</p>
+                </div>
+            </div>
+            <div class="flex gap-3 mt-6">
+                <button onclick="closeClearHistoryModal()" class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-2.5 rounded-xl transition-colors">
+                    ยกเลิก
+                </button>
+                <button onclick="confirmClearHistoryAction()" class="flex-1 bg-rose-500 hover:bg-rose-600 text-white font-bold py-2.5 rounded-xl shadow-lg shadow-rose-500/30 transition-colors">
+                    ล้างประวัติ
+                </button>
+            </div>
+        </div>
+    </popUp>
+
+    <popUp id="success-toast" class="hidden fixed top-10 left-1/2 -translate-x-1/2 bg-slate-800 text-white px-6 py-3 rounded-xl shadow-2xl z-[70] flex items-center gap-3 transition-all">
+        <span class="material-symbols-outlined text-emerald-400">check_circle</span>
+        <span class="font-bold">ล้างประวัติเรียบร้อยแล้ว!</span>
+    </popUp>
+
     <script src="js\order_history.js"></script> <!-- ย้าย script ไว้ในโฟลเดอร์ js -->
 
     <script src="navbar-script.js" defer></script>
