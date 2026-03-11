@@ -85,141 +85,215 @@ class="w-full border rounded-lg p-2">
 <source src="https://actions.google.com/sounds/v1/alarms/beep_short.ogg">
 </audio>
 
-
 <script>
+
 let table = localStorage.getItem("selectedStatusTable") || localStorage.getItem("currentTable");
-let orderHistory = JSON.parse(localStorage.getItem("currentOrders")) || [];
-let notified = false;
 
 if(!table){
-    window.location.href="index.html";
+window.location.href="index.html";
 }
 
 document.getElementById("showTable").innerText = table;
 
+
 function getOrders(){
-    return JSON.parse(localStorage.getItem("currentOrders")) || [];
+return JSON.parse(localStorage.getItem("currentOrders")) || [];
 }
+
 
 function getMyOrders(){
-    let orders = getOrders();
-    return orders.filter(o => o.table === table);
+
+let orders = getOrders();
+
+return orders.filter(o => o.table === table);
+
 }
+
+
 
 function updateStatus(){
-    let orders = getOrders();
-    let myOrders = getMyOrders();
 
-    if(myOrders.length === 0){
-        document.getElementById("statusBox").innerHTML = "ยังไม่มีรายการที่สั่ง";
-        document.getElementById("queueBox").innerHTML = "";
-        return;
-    }
+let orders = getOrders();
+let myOrders = getMyOrders();
 
-    // 🛡️ ระบบป้องกันบั๊ก 1.7 ล้านล้าน: ดึงออเดอร์ล่าสุดจากเวลา (time)
-    let latestTime = Math.max(...myOrders.map(o => o.time || o.queue));
-    let currentOrders = myOrders.filter(o => (o.time || o.queue) === latestTime);
+if(myOrders.length === 0){
 
-    let myQueue = currentOrders[0].queue; // ดึงหมายเลขคิวมาโชว์
-    
-    let mainStatus = "พร้อมเสิร์ฟ";
-    if(currentOrders.some(i => i.status === "รอคิว")){
-        mainStatus = "รอคิว";
-    } else if(currentOrders.some(i => i.status === "กำลังทำ")){
-        mainStatus = "กำลังทำ";
-    }
+document.getElementById("statusBox").innerHTML =
+"ยังไม่มีรายการที่สั่ง";
 
-    let statusBox = document.getElementById("statusBox");
-    let queueBox = document.getElementById("queueBox");
+document.getElementById("queueBox").innerHTML = "";
 
-    // 🌟 นำการแสดงผล "หมายเลขคิว" กลับมา
-    queueBox.innerHTML = `หมายเลขคิว: <span class="text-green-600 text-2xl">${myQueue}</span>`;
+return;
 
-    if(mainStatus === "กำลังทำ"){
-        statusBox.innerHTML = "🔥 กำลังเตรียมอาหาร...";
-        statusBox.className = "mt-4 text-xl font-bold text-orange-500 animate-pulse";
-        notified = false;
-        return;
-    }
-
-    if(mainStatus === "พร้อมเสิร์ฟ"){
-        statusBox.innerHTML = "✅ พร้อมเสิร์ฟแล้ว";
-        statusBox.className = "mt-4 text-xl font-bold text-green-600";
-        // ป้องกันเสียงดังวนลูปซ้ำๆ
-        if(!notified){
-            document.getElementById("notifySound").play();
-            notified = true;
-        }
-        return;
-    }
-
-    // กรณีสถานะ = รอคิว
-    statusBox.innerHTML = "⏳ กรุณารอคิวสักครู่...";
-    statusBox.className = "mt-4 text-xl font-bold text-yellow-600 animate-pulse";
-    notified = false;
-
-    // 💡 ฟีเจอร์ของเพื่อน: คำนวณว่า "เหลืออีกกี่คิว" (ปรับปรุงให้ไม่บั๊กแล้ว)
-    let waitingTimes = [...new Set(orders.filter(o => o.status === "รอคิว").map(o => o.time || o.queue))].sort((a,b) => a-b);
-    let myIndex = waitingTimes.indexOf(latestTime);
-    
-    if(myIndex > 0){
-        // ถ้ามีคิวก่อนหน้า ให้แสดงข้อความบอก
-        statusBox.innerHTML += `<div class="text-sm font-medium text-gray-500 mt-2">เหลืออีก ${myIndex} คิวก่อนถึงคุณ</div>`;
-    }
 }
 
-setInterval(updateStatus, 2000);
+
+
+let latestQueue = Math.max(...myOrders.map(o=>o.queue));
+
+let currentOrders = myOrders.filter(o=>o.queue === latestQueue);
+
+
+
+let mainStatus = "พร้อมเสิร์ฟ";
+
+if(currentOrders.some(i=>i.status==="รอคิว")){
+mainStatus="รอคิว";
+}
+else if(currentOrders.some(i=>i.status==="กำลังทำ")){
+mainStatus="กำลังทำ";
+}
+
+
+
+let statusBox = document.getElementById("statusBox");
+let queueBox = document.getElementById("queueBox");
+
+
+
+if(mainStatus==="กำลังทำ"){
+
+statusBox.innerHTML="🔥 กำลังจัดเตรียมรายการ...";
+statusBox.className="mt-4 text-xl font-bold text-orange-500 animate-pulse";
+
+queueBox.innerHTML="";
+
+return;
+
+}
+
+
+
+if(mainStatus==="พร้อมเสิร์ฟ"){
+
+statusBox.innerHTML="✅ พร้อมเสิร์ฟแล้ว";
+statusBox.className="mt-4 text-xl font-bold text-green-600";
+
+queueBox.innerHTML="";
+
+return;
+
+}
+
+
+
+statusBox.innerHTML="⏳ กรุณารอคิว...";
+statusBox.className="mt-4 text-xl font-bold text-yellow-600 animate-pulse";
+
+
+
+/* ------------------------
+คำนวณคิวจริง
+------------------------ */
+
+let waitingQueues = [
+
+...new Set(
+orders
+.filter(o=>o.status==="รอคิว")
+.map(o=>o.queue)
+)
+
+].sort((a,b)=>a-b);
+
+
+
+let myIndex = waitingQueues.indexOf(latestQueue);
+
+if(myIndex > -1){
+
+queueBox.innerHTML = `เหลืออีก <span class="text-orange-600">${myIndex}</span> คิว`;
+
+}else{
+
+queueBox.innerHTML = "";
+
+}
+
+}
+
+
+
+setInterval(updateStatus,2000);
+
 updateStatus();
 
+
+
 function openStatusModal(){
-    loadTableOrders();
-    document.getElementById("statusModal").classList.remove("hidden");
+
+loadTableOrders();
+
+document.getElementById("statusModal").classList.remove("hidden");
+
 }
+
+
 
 function closeStatusModal(){
-    document.getElementById("statusModal").classList.add("hidden");
+
+document.getElementById("statusModal").classList.add("hidden");
+
 }
+
+
 
 function loadTableOrders(){
-    let box = document.getElementById("tableOrders");
-    box.innerHTML = "";
-    let myOrders = getMyOrders();
 
-    if(myOrders.length === 0){
-        box.innerHTML = "ไม่มีรายการ";
-        return;
-    }
+let myOrders = getMyOrders();
+let box = document.getElementById("tableOrders");
 
-    // ดึงเฉพาะบิลล่าสุดมาโชว์ในป็อปอัป
-    let latestTime = Math.max(...myOrders.map(o => o.time || o.queue));
-    let currentOrders = myOrders.filter(o => (o.time || o.queue) === latestTime);
+box.innerHTML="";
 
-    currentOrders.forEach(o => {
-        let statusColor = "text-yellow-600";
-        if(o.status === "กำลังทำ") statusColor = "text-orange-500";
-        if(o.status === "พร้อมเสิร์ฟ") statusColor = "text-green-600";
-
-        // 🌟 ดึงข้อมูล ธรรมดา/พิเศษ และ ความเผ็ด กลับมา
-        let sizeText = o.sizeName ? `<span class="text-black-600 font-bold">${o.sizeName}</span>` : "";
-        let spicyText = o.spicy ? `<span class="text-rose-500 font-bold ml-1">🌶 ${o.spicy}</span>` : "";
-
-        box.innerHTML += `
-        <div class="border p-3 rounded-xl mb-2 bg-slate-50 flex justify-between items-center">
-            <div>
-                <div class="font-semibold text-gray-800">${o.name} <span class="text-orange-600 ml-1">x ${o.qty}</span></div>
-                <div class="text-xs mt-1">${sizeText} ${spicyText}</div>
-            </div>
-            <div class="text-xs text-right">
-                <span class="text-gray-500">สถานะ:</span><br>
-                <span class="font-bold ${statusColor}">${o.status}</span>
-            </div>
-        </div>`;
-    });
+if(myOrders.length === 0){
+box.innerHTML = "ไม่มีรายการ";
+return;
 }
+
+myOrders.forEach(o => {
+
+let div = document.createElement("div");
+div.className = "border rounded-lg p-2 flex justify-between items-center";
+
+let menuName = o.menu || o.name || o.item || "ไม่พบชื่อเมนู";
+
+/* สีของสถานะ */
+let statusColor = "text-gray-500";
+
+if(o.status === "รอคิว"){
+statusColor = "text-yellow-500";
+}
+else if(o.status === "กำลังทำ"){
+statusColor = "text-orange-500";
+}
+else if(o.status === "เสร็จแล้ว" || o.status === "พร้อมเสิร์ฟ"){
+statusColor = "text-green-600";
+}
+
+div.innerHTML = `
+<div>
+<div class="font-semibold">${menuName}</div>
+
+<div class="text-xs">
+<span class="text-black">สถานะ:</span>
+<span class="${statusColor} font-semibold">${o.status}</span>
+</div>
+`;
+
+box.appendChild(div);
+
+});
+
+}
+
+
 
 function goBackToMenu(){
-    window.location.href="menu.html";
+
+window.location.href="menu.html";
+
 }
+
 </script>
 
 </body>

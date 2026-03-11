@@ -75,7 +75,7 @@ function renderAdmin(){
     let sortedQueues = Object.keys(grouped).sort((a,b) => Number(a) - Number(b)); 
     let waitingNumber = 1;
 
-    sortedQueues.forEach(queue => {
+    sortedQueues.forEach((queue,index) => {
         let table = grouped[queue][0].table;
         let tableBox=document.createElement("div");
         tableBox.className="bg-white dark:bg-slate-900 p-5 rounded-2xl shadow-lg border border-slate-100 dark:border-slate-800 flex flex-col h-full mb-4";
@@ -118,42 +118,49 @@ function renderAdmin(){
         else if(grouped[queue].some(i => i.status === "กำลังทำ")) mainStatus = "กำลังทำ";
 
         // 👉 แก้ตรงนี้: ดึงเลขคิวของจริงจากฐานข้อมูลมาโชว์ (ให้ตรงกับหน้าลูกค้าเป๊ะๆ)
-        let realQueue = grouped[queue][0].queue;
-        let queueTitle = `คิว <span class="text-primary">${realQueue}</span>`;
+        let displayQueue = index + 1;
+        let queueTitle = "";
 
-        tableBox.innerHTML = `
-        <div class="flex justify-between items-center mb-4 pb-2 border-b border-slate-100 dark:border-slate-800">
-            <h2 class="font-black text-2xl text-slate-900 dark:text-white">
-            ${queueTitle}
-            <span class="ml-2 bg-orange-500 text-white px-3 py-1 rounded-lg text-sm">
+if(mainStatus === "รอคิว"){
+    queueTitle = `คิว <span class="text-primary">${waitingNumber++}</span>`;
+}
+
+tableBox.innerHTML = `
+<div class="flex justify-between items-center mb-4 pb-2 border-b border-slate-100 dark:border-slate-800">
+    <h2 class="font-black text-2xl text-slate-900 dark:text-white">
+        ${queueTitle}
+        <span class="ml-2 bg-orange-500 text-white px-3 py-1 rounded-lg text-sm">
             โต๊ะ ${table}
-            </span></h2>
-        </div>
-        <div class="flex-grow">${itemsHTML}</div>
-        <div class="flex gap-3 mt-4 pt-2">
+        </span>
+    </h2>
+</div>
 
-        ${mainStatus==="รอคิว" ? `
-        <button onclick="receiveQueue('${queue}')" class="flex-1 bg-primary hover:bg-primary/90 text-white font-bold py-3 rounded-xl shadow-md">
-            รับคิว
-        </button>` : ``}
+<div class="flex-grow">${itemsHTML}</div>
 
-        ${mainStatus==="กำลังทำ" ? `
-        <button onclick="markReady('${queue}')" class="flex-1 bg-primary hover:bg-primary/90 text-white font-bold py-3 rounded-xl shadow-md">
-            พร้อมเสิร์ฟ
-        </button>` : ``}
+<div class="flex gap-3 mt-4 pt-2">
 
-        ${mainStatus==="พร้อมเสิร์ฟ" ? `
-        <button onclick="finishTable('${queue}')" class="flex-1 bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3 rounded-xl shadow-md">
-            จบออเดอร์
-        </button>` : ``}
+${mainStatus==="รอคิว" ? `
+<button onclick="receiveQueue('${queue}')" class="flex-1 bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 rounded-xl shadow-md">
+รับคิว
+</button>` : ``}
 
-        ${mainStatus !== "พร้อมเสิร์ฟ" ? `
-        <button onclick="openDeleteModal('${table}', '${queue}')" class="flex-none bg-rose-100 hover:bg-rose-200 text-rose-600 font-bold px-4 rounded-xl flex items-center justify-center">
-            <span class="material-symbols-outlined">delete</span>
-        </button>
-        ` : ``}
+${mainStatus==="กำลังทำ" ? `
+<button onclick="markReady('${queue}')" class="flex-1 bg-primary hover:bg-primary/90 text-white font-bold py-3 rounded-xl shadow-md">
+พร้อมเสิร์ฟ
+</button>` : ``}
 
-        </div>`;
+${mainStatus==="พร้อมเสิร์ฟ" ? `
+<button onclick="finishTable('${queue}')" class="flex-1 bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3 rounded-xl shadow-md">
+จบออเดอร์
+</button>` : ``}
+
+${mainStatus !== "พร้อมเสิร์ฟ" ? `
+<button onclick="openDeleteModal('${table}', '${queue}')" class="flex-none bg-rose-100 hover:bg-rose-200 text-rose-600 font-bold px-4 rounded-xl flex items-center justify-center">
+<span class="material-symbols-outlined">delete</span>
+</button>
+` : ``}
+
+</div>`;
 
         if(mainStatus === "รอคิว") waitingBox.appendChild(tableBox);
         else if(mainStatus === "กำลังทำ") cookingBox.appendChild(tableBox);
@@ -300,21 +307,13 @@ function closeFinishPopup(){
 }
 
 function confirmFinishOrder(){
-
-let orders = JSON.parse(localStorage.getItem("currentOrders")) || [];
-
-if(finishOrderIndex !== null){
-
-orders.splice(finishOrderIndex,1);
-
-localStorage.setItem("currentOrders",JSON.stringify(orders));
-
-}
-
-closeFinishPopup();
-
-location.reload();
-
+    let orders = JSON.parse(localStorage.getItem("currentOrders")) || [];
+    if(finishOrderIndex !== null){
+        orders.splice(finishOrderIndex,1);
+        localStorage.setItem("currentOrders",JSON.stringify(orders));
+    }
+    closeFinishPopup();
+    location.reload();
 }
 
 
