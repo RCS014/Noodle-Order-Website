@@ -215,13 +215,6 @@ function removeItem(i){
     showToast("ลบแล้ว");
 }
 
-function clearCart(){
-    cart=[];
-    updateCart();
-    renderCart();
-    showToast("ลบทั้งหมดแล้ว");
-}
-
 function confirmOrder(){
     if(cart.length===0){
         showToast("ยังไม่มีรายการ");

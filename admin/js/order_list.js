@@ -81,8 +81,10 @@ function renderAdmin(){
         tableBox.className="bg-white dark:bg-slate-900 p-5 rounded-2xl shadow-lg border border-slate-100 dark:border-slate-800 flex flex-col h-full mb-4";
 
         let itemsHTML="";
+        let totalPrice = 0; // 🌟 1. เพิ่มตัวแปรเก็บราคารวม
         
         grouped[queue].forEach((item,index)=>{
+            totalPrice += (item.price * item.qty);
             let timeString = formatThaiDate(item.time); 
             let sizeStr = item.sizeName ? `${item.sizeName}<br>` : "";
             let spicyStr = item.spicy ? `🌶 ${item.spicy}<br>` : "";
@@ -136,6 +138,10 @@ tableBox.innerHTML = `
 </div>
 
 <div class="flex-grow">${itemsHTML}</div>
+
+<div class="text-right font-black text-xl text-orange-600 pt-3 mt-1 border-t border-slate-100 dark:border-slate-800">
+    ราคารวม: ${totalPrice} บาท
+</div>
 
 <div class="flex gap-3 mt-4 pt-2">
 

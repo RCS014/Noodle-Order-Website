@@ -11,7 +11,7 @@
 <style>
 body{
     font-family: 'Kanit';
-    height:100vh;
+    min-height:100vh;
     display:flex;
     justify-content:center;
     align-items:center;
@@ -24,319 +24,181 @@ body{
     background-size: 80px 80px;
     background-position: 0 0, 40px 40px;
 }
-
-
 </style>
 
 </head>
 
-<body class="bg-gradient-to-br from-orange-50 via-white to-orange-50 min-h-screen flex flex-col items-center p-6">
+<body class="bg-gradient-to-br from-orange-50 via-white to-orange-50 min-h-screen flex flex-col items-center p-6 py-12">
 
-<h1 class="text-2xl md:text-3xl font-bold text-orange-600 mb-6">
-🍜 สถานะออเดอร์
-</h1>
+    <div class="flex items-center gap-3 mb-6">
+        <span class="text-4xl">🍜</span>
+        <h1 class="text-2xl md:text-3xl font-black text-orange-600">
+            สถานะออเดอร์
+        </h1>
+    </div>
 
-<div class="bg-white shadow-xl rounded-2xl p-6 w-full max-w-md text-center space-y-4">
+    <div class="bg-white shadow-xl rounded-2xl p-6 w-full max-w-md text-center space-y-4">
 
-<div class="text-lg">
-โต๊ะที่สั่ง:
-<span id="showTable" class="font-bold text-orange-600"></span>
-</div>
+        <div class="text-lg font-bold text-slate-800">
+            โต๊ะที่สั่ง:
+            <span id="showTable" class="text-orange-600"></span>
+        </div>
 
-<div id="statusBox"
-class="mt-4 text-xl font-semibold text-yellow-600 animate-pulse">
-กำลังโหลดสถานะ...
-</div>
+        <div id="statusBox" class="mt-4 text-xl font-semibold text-yellow-600 animate-pulse">
+            กำลังโหลดสถานะ...
+        </div>
 
-<div id="queueBox"
-class="text-lg font-bold text-gray-700">
-</div>
+        <div id="queueBox" class="text-base font-bold text-gray-500 mt-2"></div>
 
-<button onclick="openStatusModal()" 
-class="mt-4 bg-orange-600 hover:bg-orange-700 text-white px-4 py-2 rounded-lg w-full">
-ดูรายการโต๊ะนี้
-</button>
+        <div id="mainOrderList" class="mt-6 space-y-3 text-left">
+            </div>
 
-<button onclick="goBackToMenu()" 
-class="mt-2 bg-gray-200 hover:bg-gray-300 text-black px-4 py-2 rounded-lg w-full">
-กลับไปสั่งอีกครั้ง
-</button>
+        <div id="totalPriceBox" class="border-t border-slate-200 pt-4 mt-4 text-right font-black text-xl text-orange-600 hidden">
+            ราคารวมทั้งหมด: 0 บาท
+        </div>
 
-</div>
+        <button onclick="goBackToMenu()" class="mt-6 bg-slate-200 hover:bg-slate-300 text-slate-800 px-4 py-3 rounded-xl w-full transition-colors active:scale-95">
+            กลับไปสั่งอีกครั้ง
+        </button>
 
+    </div>
 
-<div id="statusModal" class="hidden fixed inset-0 bg-black/40 flex items-center justify-center p-4">
-<div class="bg-white w-full max-w-md rounded-2xl p-6 shadow-2xl space-y-4">
-
-<h3 class="text-lg font-bold text-orange-600">รายการโต๊ะนี้</h3>
-
-<div id="tableOrders" class="space-y-2 text-sm max-h-60 overflow-y-auto"></div>
-
-<button onclick="closeStatusModal()" 
-class="w-full border rounded-lg p-2">
-ปิด
-</button>
-
-</div>
-</div>
-
-
-<audio id="notifySound">
-<source src="https://actions.google.com/sounds/v1/alarms/beep_short.ogg">
-</audio>
+    <audio id="notifySound">
+        <source src="https://actions.google.com/sounds/v1/alarms/beep_short.ogg">
+    </audio>
 
 <script>
-
 let table = localStorage.getItem("selectedStatusTable") || localStorage.getItem("currentTable");
+let notified = false;
 
 if(!table){
-window.location.href="index.html";
+    window.location.href="index.html";
 }
 
 document.getElementById("showTable").innerText = table;
 
-
 function getOrders(){
-return JSON.parse(localStorage.getItem("currentOrders")) || [];
+    return JSON.parse(localStorage.getItem("currentOrders")) || [];
 }
-
 
 function getMyOrders(){
-
-let orders = getOrders();
-
-return orders.filter(o => o.table === table);
-
+    let orders = getOrders();
+    return orders.filter(o => o.table === table);
 }
-
-
 
 function updateStatus(){
+    let orders = getOrders();
+    let myOrders = getMyOrders();
+    let statusBox = document.getElementById("statusBox");
+    let queueBox = document.getElementById("queueBox");
 
-let orders = getOrders();
-let myOrders = getMyOrders();
+    if(myOrders.length === 0){
+        statusBox.innerHTML = "ยังไม่มีรายการที่สั่ง";
+        queueBox.innerHTML = "";
+        document.getElementById("mainOrderList").innerHTML = "";
+        document.getElementById("totalPriceBox").classList.add("hidden");
+        return;
+    }
 
-if(myOrders.length === 0){
+    // 🛡️ ระบบป้องกันบั๊ก 1.7 ล้านล้าน: ดึงออเดอร์ล่าสุดจากเวลา (time)
+    let latestTime = Math.max(...myOrders.map(o => o.time || o.queue));
+    let currentOrders = myOrders.filter(o => (o.time || o.queue) === latestTime);
 
-document.getElementById("statusBox").innerHTML =
-"ยังไม่มีรายการที่สั่ง";
+    let mainStatus = "พร้อมเสิร์ฟ";
+    if(currentOrders.some(i => i.status === "รอคิว")){
+        mainStatus = "รอคิว";
+    } else if(currentOrders.some(i => i.status === "กำลังทำ")){
+        mainStatus = "กำลังทำ";
+    }
 
-document.getElementById("queueBox").innerHTML = "";
+    // --- อัปเดตข้อความสถานะด้านบน ---
+    if(mainStatus === "กำลังทำ"){
+        statusBox.innerHTML = "🔥 กำลังจัดเตรียมรายการ...";
+        statusBox.className = "text-xl font-bold text-orange-500 animate-pulse";
+        queueBox.innerHTML = "";
+        notified = false;
+    } else if(mainStatus === "พร้อมเสิร์ฟ"){
+        statusBox.innerHTML = "✅ พร้อมเสิร์ฟแล้ว";
+        statusBox.className = "text-xl font-bold text-green-600";
+        queueBox.innerHTML = "";
+        if(!notified){
+            document.getElementById("notifySound").play();
+            notified = true;
+        }
+    } else {
+        statusBox.innerHTML = "⏳ กรุณารอคิว...";
+        statusBox.className = "text-xl font-bold text-yellow-500 animate-pulse";
+        notified = false;
+        
+        // คำนวณคิวจริง
+        let waitingTimes = [...new Set(orders.filter(o => o.status === "รอคิว").map(o => o.time || o.queue))].sort((a,b) => a-b);
+        let myIndex = waitingTimes.indexOf(latestTime);
+        
+        if(myIndex > 0){
+            queueBox.innerHTML = `เหลืออีก <span class="text-orange-600">${myIndex}</span> คิวก่อนถึงคุณ`;
+        } else {
+            queueBox.innerHTML = "";
+        }
+    }
 
-return;
-
+    // --- วาดรายการอาหารลงหน้าหลัก ---
+    renderOrderList(currentOrders);
 }
 
+function renderOrderList(ordersToRender) {
+    let box = document.getElementById("mainOrderList");
+    let priceBox = document.getElementById("totalPriceBox");
+    box.innerHTML = "";
+    let totalPrice = 0;
 
+    ordersToRender.forEach(o => {
+        let menuName = o.menu || o.name || o.item || "ไม่พบชื่อเมนู";
+        let size = o.sizeName ? o.sizeName.split(" ")[0] + " " + o.price + " บาท" : o.price + " บาท"; // ดึงเฉพาะคำว่า ธรรมดา/พิเศษ มาต่อท้ายด้วยราคา
+        let spicy = o.spicyName || o.spicy || "ไม่เผ็ด";
+        let qty = o.qty || 1;
+        let price = o.price || 0;
+        
+        let sum = price * qty;
+        totalPrice += sum;
 
-let latestQueue = Math.max(...myOrders.map(o=>o.queue));
+        let statusColor = "text-yellow-500";
+        if(o.status === "กำลังทำ") statusColor = "text-orange-500";
+        if(o.status === "เสร็จแล้ว" || o.status === "พร้อมเสิร์ฟ") statusColor = "text-green-600";
 
-let currentOrders = myOrders.filter(o=>o.queue === latestQueue);
+        box.innerHTML += `
+        <div class="border border-slate-200 rounded-xl p-4 bg-white shadow-sm">
+            <div class="font-black text-slate-800 text-lg leading-tight mb-2">${menuName}</div>
+            <div class="text-sm text-slate-500 font-medium space-y-1">
+                <div>ขนาด: <span class="text-slate-700">${size}</span></div>
+                <div>ระดับความเผ็ด: <span class="text-slate-700">${spicy}</span></div>
+                <div>จำนวน: <span class="text-slate-700">${qty}</span></div>
+            </div>
+            <div class="text-orange-600 font-bold mt-2">
+                รวม: ${sum} บาท
+            </div>
+            <div class="text-sm mt-2 pt-2 border-t border-slate-100 flex items-center gap-1">
+                <span class="text-slate-500 font-medium">สถานะ:</span>
+                <span class="${statusColor} font-black">${o.status}</span>
+            </div>
+        </div>
+        `;
+    });
 
-
-
-let mainStatus = "พร้อมเสิร์ฟ";
-
-if(currentOrders.some(i=>i.status==="รอคิว")){
-mainStatus="รอคิว";
-}
-else if(currentOrders.some(i=>i.status==="กำลังทำ")){
-mainStatus="กำลังทำ";
-}
-
-
-
-let statusBox = document.getElementById("statusBox");
-let queueBox = document.getElementById("queueBox");
-
-
-
-if(mainStatus==="กำลังทำ"){
-
-statusBox.innerHTML="🔥 กำลังจัดเตรียมรายการ...";
-statusBox.className="mt-4 text-xl font-bold text-orange-500 animate-pulse";
-
-queueBox.innerHTML="";
-
-return;
-
-}
-
-
-
-if(mainStatus==="พร้อมเสิร์ฟ"){
-
-statusBox.innerHTML="✅ พร้อมเสิร์ฟแล้ว";
-statusBox.className="mt-4 text-xl font-bold text-green-600";
-
-queueBox.innerHTML="";
-
-return;
-
-}
-
-
-
-statusBox.innerHTML="⏳ กรุณารอคิว...";
-statusBox.className="mt-4 text-xl font-bold text-yellow-600 animate-pulse";
-
-
-
-/* ------------------------
-คำนวณคิวจริง
------------------------- */
-
-let waitingQueues = [
-
-...new Set(
-orders
-.filter(o=>o.status==="รอคิว")
-.map(o=>o.queue)
-)
-
-].sort((a,b)=>a-b);
-
-
-
-let myIndex = waitingQueues.indexOf(latestQueue);
-
-if(myIndex > -1){
-
-queueBox.innerHTML = `เหลืออีก <span class="text-orange-600">${myIndex}</span> คิว`;
-
-}else{
-
-queueBox.innerHTML = "";
-
+    // อัปเดตราคารวม
+    if(totalPrice > 0) {
+        priceBox.innerHTML = `ราคารวมทั้งหมด: <span class="text-2xl">${totalPrice}</span> บาท`;
+        priceBox.classList.remove("hidden");
+    } else {
+        priceBox.classList.add("hidden");
+    }
 }
 
-}
-
-
-
-setInterval(updateStatus,2000);
-
+setInterval(updateStatus, 2000);
 updateStatus();
 
-
-
-function openStatusModal(){
-
-loadTableOrders();
-
-document.getElementById("statusModal").classList.remove("hidden");
-
-}
-
-
-
-function closeStatusModal(){
-
-document.getElementById("statusModal").classList.add("hidden");
-
-}
-
-
-
-function loadTableOrders(){
-
-let myOrders = getMyOrders();
-let box = document.getElementById("tableOrders");
-
-box.innerHTML="";
-
-if(myOrders.length === 0){
-box.innerHTML = "ไม่มีรายการ";
-return;
-}
-
-let totalPrice = 0;
-
-myOrders.forEach(o => {
-
-let div = document.createElement("div");
-div.className = "border rounded-lg p-3";
-
-let menuName = o.menu || o.name || o.item || "ไม่พบชื่อเมนู";
-let size = o.sizeName || "ธรรมดา";
-let spicy = o.spicyName || o.spicy || "ไม่เผ็ด";
-let qty = o.qty || 1;
-let price = o.price || 0;
-
-let sum = price * qty;
-totalPrice += sum;
-
-/* สีสถานะ */
-
-let statusColor = "text-gray-500";
-
-if(o.status === "รอคิว"){
-statusColor = "text-yellow-500";
-}
-else if(o.status === "กำลังทำ"){
-statusColor = "text-orange-500";
-}
-else if(o.status === "เสร็จแล้ว" || o.status === "พร้อมเสิร์ฟ"){
-statusColor = "text-green-600";
-}
-
-div.innerHTML = `
-<div class="flex justify-between items-start">
-
-<div>
-
-<div class="font-semibold text-base">${menuName}</div>
-
-<div class="text-sm text-gray-600">
-ขนาด: ${size}
-</div>
-
-<div class="text-sm text-gray-600">
-ระดับความเผ็ด: ${spicy}
-</div>
-
-<div class="text-sm text-gray-600">
-จำนวน: ${qty}
-</div>
-
-<div class="text-sm font-semibold text-orange-600">
-รวม: ${sum} บาท
-</div>
-
-<div class="text-xs mt-1">
-<span>สถานะ:</span>
-<span class="${statusColor} font-semibold">${o.status}</span>
-</div>
-
-</div>
-
-</div>
-`;
-
-box.appendChild(div);
-
-});
-
-/* ราคารวมทั้งหมด */
-
-let totalDiv = document.createElement("div");
-
-totalDiv.className = "border-t pt-3 mt-3 text-right font-bold text-lg text-orange-600";
-
-totalDiv.innerHTML = `ราคารวมทั้งหมด: ${totalPrice} บาท`;
-
-box.appendChild(totalDiv);
-
-}
-
-
-
 function goBackToMenu(){
-
-window.location.href="menu.html";
-
+    window.location.href="menu.html";
 }
-
 </script>
 
 </body>
