@@ -250,14 +250,24 @@ box.innerHTML = "ไม่มีรายการ";
 return;
 }
 
+let totalPrice = 0;
+
 myOrders.forEach(o => {
 
 let div = document.createElement("div");
-div.className = "border rounded-lg p-2 flex justify-between items-center";
+div.className = "border rounded-lg p-3";
 
 let menuName = o.menu || o.name || o.item || "ไม่พบชื่อเมนู";
+let size = o.sizeName || "ธรรมดา";
+let spicy = o.spicyName || o.spicy || "ไม่เผ็ด";
+let qty = o.qty || 1;
+let price = o.price || 0;
 
-/* สีของสถานะ */
+let sum = price * qty;
+totalPrice += sum;
+
+/* สีสถานะ */
+
 let statusColor = "text-gray-500";
 
 if(o.status === "รอคิว"){
@@ -271,18 +281,51 @@ statusColor = "text-green-600";
 }
 
 div.innerHTML = `
-<div>
-<div class="font-semibold">${menuName}</div>
+<div class="flex justify-between items-start">
 
-<div class="text-xs">
-<span class="text-black">สถานะ:</span>
+<div>
+
+<div class="font-semibold text-base">${menuName}</div>
+
+<div class="text-sm text-gray-600">
+ขนาด: ${size}
+</div>
+
+<div class="text-sm text-gray-600">
+ระดับความเผ็ด: ${spicy}
+</div>
+
+<div class="text-sm text-gray-600">
+จำนวน: ${qty}
+</div>
+
+<div class="text-sm font-semibold text-orange-600">
+รวม: ${sum} บาท
+</div>
+
+<div class="text-xs mt-1">
+<span>สถานะ:</span>
 <span class="${statusColor} font-semibold">${o.status}</span>
+</div>
+
+</div>
+
 </div>
 `;
 
 box.appendChild(div);
 
 });
+
+/* ราคารวมทั้งหมด */
+
+let totalDiv = document.createElement("div");
+
+totalDiv.className = "border-t pt-3 mt-3 text-right font-bold text-lg text-orange-600";
+
+totalDiv.innerHTML = `ราคารวมทั้งหมด: ${totalPrice} บาท`;
+
+box.appendChild(totalDiv);
 
 }
 
