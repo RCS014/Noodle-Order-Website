@@ -68,11 +68,18 @@ body{
                             <span class="material-symbols-outlined text-primary text-lg">history</span>
                             <span>แสดงประวัติการสั่งย้อนหลัง</span>
                         </p>
-                        <button onclick="clearHistory()" class="mt-4 bg-rose-500 hover:bg-rose-600 text-white px-5 py-2.5 rounded-xl font-bold flex items-center gap-2 shadow-md transition-transform active:scale-95 w-fit">
-                        <span class="material-symbols-outlined">delete_sweep</span> 
-                            ล้างประวัติการสั่ง
-                        </button>
-                    </div>
+                        <div class="mt-4 flex items-center gap-3">
+                            <label for="tableFilter" class="font-bold text-slate-700 bg-slate-200 px-3 py-2 rounded-lg shadow-sm">🔍 กรองตามโต๊ะ:</label>
+                            <select id="tableFilter" onchange="applyFilter()" class="bg-white border border-slate-300 text-slate-900 text-base rounded-lg focus:ring-primary focus:border-primary block p-2 shadow-sm w-48 cursor-pointer">
+                                <option value="all">แสดงทุกโต๊ะ (All)</option>
+                                <option value="1">โต๊ะ 1</option>
+                                <option value="2">โต๊ะ 2</option>
+                                <option value="3">โต๊ะ 3</option>
+                                <option value="4">โต๊ะ 4</option>
+                                <option value="5">โต๊ะ 5</option>
+                                <option value="หน้าเคาน์เตอร์">หน้าเคาน์เตอร์</option>
+                            </select>
+                        </div>
                 </div>
             </header>
 

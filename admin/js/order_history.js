@@ -3,20 +3,34 @@ const closeSidebarBtn = document.getElementById('close-sidebar-btn');
 const sidebar = document.getElementById('sidebar');
 const overlay = document.getElementById('sidebar-overlay');
 function toggleSidebar() { sidebar.classList.toggle('-translate-x-full'); overlay.classList.toggle('hidden'); }
-mobileMenuBtn.addEventListener('click', toggleSidebar); closeSidebarBtn.addEventListener('click', toggleSidebar); overlay.addEventListener('click', toggleSidebar);
+if(mobileMenuBtn) mobileMenuBtn.addEventListener('click', toggleSidebar); 
+if(closeSidebarBtn) closeSidebarBtn.addEventListener('click', toggleSidebar); 
+if(overlay) overlay.addEventListener('click', toggleSidebar);
 
 const itemsPerPage = 10; 
 let currentPage = 1;
 let allGroupedOrders = [];
 
-function renderHistory() {
-    const ONE_HOUR = 60 * 60 * 1000;
-    const now = Date.now();
+// ==========================================
+// เรียกใช้เมื่อมีการเปลี่ยน Dropdown กรองโต๊ะ
+// ==========================================
+function applyFilter() {
+    currentPage = 1;
+    renderHistory();
+}
 
-    // 🔴 แก้ตรงนี้: เปลี่ยนจาก o.queue เป็น o.time
+function renderHistory() {
+    // ดึงวันที่ปัจจุบัน (เช่น 14/03/2569)
+    const today = new Date().toLocaleDateString('th-TH'); 
     let historyOrders = JSON.parse(localStorage.getItem("orderHistory")) || [];
-    let validHistory = historyOrders.filter(o => (now - o.time) <= ONE_HOUR); 
     
+    // 🌟 ระบบที่ 1: ลบประวัติข้ามวัน (เก็บไว้แสดงผลเฉพาะบิลที่สั่ง "วันนี้" เท่านั้น)
+    let validHistory = historyOrders.filter(o => {
+        let orderDate = new Date(o.time).toLocaleDateString('th-TH');
+        return orderDate === today;
+    }); 
+    
+    // ถ้ามีบิลของเมื่อวานถูกตัดทิ้งไป ให้เซฟอัปเดต LocalStorage ใหม่
     if(validHistory.length !== historyOrders.length) {
         localStorage.setItem("orderHistory", JSON.stringify(validHistory));
     }
@@ -24,17 +38,16 @@ function renderHistory() {
     let currentOrders = JSON.parse(localStorage.getItem("currentOrders")) || [];
     let allDisplayOrders = validHistory.concat(currentOrders);
 
-    let oneHourAgo = new Date(now - ONE_HOUR);
-    let timeText = `แสดงประวัติย้อนหลัง 1 ชั่วโมง (ตั้งแต่เวลา ${String(oneHourAgo.getHours()).padStart(2,'0')}:${String(oneHourAgo.getMinutes()).padStart(2,'0')} น.)`;
-    let labelEl = document.getElementById('time-label');
-    if(labelEl) labelEl.innerText = timeText;
+    // 🌟 ระบบที่ 2: ตัวกรองโต๊ะ
+    let filterTable = document.getElementById("tableFilter") ? document.getElementById("tableFilter").value : "all";
+    if(filterTable !== "all") {
+        allDisplayOrders = allDisplayOrders.filter(o => String(o.table) === String(filterTable));
+    }
 
     let grouped = {};
     allDisplayOrders.forEach(o => {
-        // 🔴 แก้ตรงนี้: ใช้ o.time เป็นตัวแยกบิล แทน o.queue
         let key = o.time; 
         if (!grouped[key]) {
-            // 🔴 แก้ตรงนี้: เก็บ o.time ไว้ใช้แปลงวันที่
             grouped[key] = { time: o.time, table: o.table, status: "เสิร์ฟแล้ว", total: 0, items: [] };
         }
         grouped[key].items.push(o);
@@ -58,7 +71,7 @@ function displayItems(page) {
     container.innerHTML = "";
 
     if (allGroupedOrders.length === 0) {
-        container.innerHTML = "<p class='text-center py-8 text-slate-500'>ไม่มีประวัติการสั่งอาหารใน 1 ชั่วโมงที่ผ่านมา</p>";
+        container.innerHTML = "<p class='text-center py-10 text-slate-500 font-bold text-lg'>ไม่มีประวัติการสั่งอาหาร</p>";
         return;
     }
 
@@ -81,17 +94,20 @@ function displayItems(page) {
         if (order.status === "ยังไม่ได้เสิร์ฟ") statusColor = "text-amber-500"; 
         if (order.status === "ยกเลิก") statusColor = "text-rose-500"; 
 
+        // แปลงชื่อโต๊ะให้สวยงาม
+        let displayTable = order.table === "หน้าเคาน์เตอร์" ? "สั่งกลับบ้าน<br><span class='text-xs font-normal'>(หน้าเคาน์เตอร์)</span>" : "โต๊ะ " + order.table;
+
         container.innerHTML += `
         <div class="bg-white rounded-xl shadow-sm p-6 px-8 grid grid-cols-12 gap-4 items-center text-center border hover:shadow-md transition-shadow">
-            <div class="col-span-3 text-left text-sm text-slate-600">${timeString}</div>
-            <div class="col-span-1 font-bold text-lg">${order.table}</div>
+            <div class="col-span-3 text-left text-sm font-medium text-slate-500">${timeString}</div>
+            <div class="col-span-1 font-bold text-lg text-orange-600 leading-tight">${displayTable}</div>
             <div class="col-span-4 flex justify-center">
                 <div class="flex flex-col w-full max-w-[250px] bg-slate-50 p-3 rounded-lg text-left">
                     ${itemsHTML}
                 </div>
             </div>
-            <div class="col-span-2 font-bold">${order.total}.-</div>
-            <div class="col-span-2 font-bold ${statusColor}">${order.status}</div>
+            <div class="col-span-2 font-black text-lg">${order.total}.-</div>
+            <div class="col-span-2 font-black ${statusColor} text-lg">${order.status}</div>
         </div>`;
     });
 }
@@ -125,38 +141,9 @@ function setupPagination() {
     }
 }
 
-// 1. กดปุ่มล้างประวัติ -> ให้เด้ง Pop-up ขึ้นมา
-function clearHistory() {
-    let modal = document.getElementById('clear-history-modal');
-    if (modal) modal.classList.remove('hidden');
-}
-
-// 2. กดปุ่มยกเลิกใน Pop-up -> ปิด Pop-up
-function closeClearHistoryModal() {
-    let modal = document.getElementById('clear-history-modal');
-    if (modal) modal.classList.add('hidden');
-}
-
-// 3. กดปุ่มยืนยันใน Pop-up -> ลบข้อมูลและโชว์ Toast แจ้งเตือน
-function confirmClearHistoryAction() {
-    // ลบเฉพาะประวัติ
-    localStorage.removeItem("orderHistory"); 
-    currentPage = 1;
-    renderHistory(); // รีเฟรชหน้าจอให้ว่างเปล่า
-    closeClearHistoryModal(); // ปิด Pop-up
-    
-    // โชว์ Toast แจ้งเตือน (แทน alert)
-    const toast = document.getElementById("success-toast");
-    if(toast) {
-        toast.classList.remove("hidden");
-        // สั่งให้หายไปเองภายใน 2.5 วินาที
-        setTimeout(() => toast.classList.add("hidden"), 2500);
-    }
-}
-
 window.onload = function() {
     renderHistory();
-    // รีเฟรชแบบเงียบๆ ทุกๆ 3 วินาที เพื่อดูออเดอร์เข้าใหม่แบบ Real-time
+    // รีเฟรชอัตโนมัติทุกๆ 3 วินาที (หากมีการเลือก Filter ค้างไว้ ระบบก็จะจำค่านั้นไว้แล้วกรองให้ตลอด)
     setInterval(renderHistory, 3000); 
 };
 window.addEventListener("storage", renderHistory);
