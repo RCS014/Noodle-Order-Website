@@ -39,9 +39,8 @@ body{
 
     <div class="bg-white shadow-xl rounded-2xl p-6 w-full max-w-md text-center space-y-4">
 
-        <div class="text-lg font-bold text-slate-800">
-            โต๊ะที่สั่ง:
-            <span id="showTable" class="text-orange-600"></span>
+        <div id="tableDisplayHeader" class="text-lg font-bold text-slate-800">
+            โต๊ะที่สั่ง: <span id="showTable" class="text-orange-600"></span>
         </div>
 
         <div id="statusBox" class="mt-4 text-xl font-semibold text-yellow-600 animate-pulse">
@@ -68,14 +67,21 @@ body{
     </audio>
 
 <script>
-let table = localStorage.getItem("selectedStatusTable") || localStorage.getItem("currentTable");
+const urlParams = new URLSearchParams(window.location.search);
+let table = urlParams.get('table') || localStorage.getItem("selectedStatusTable") || localStorage.getItem("currentTable");
 let notified = false;
 
-if(!table){
-    window.location.href="index.html";
+// อัปเดตความจำเครื่องให้เป็นโต๊ะปัจจุบันเสมอ
+if(table) {
+    localStorage.setItem("selectedStatusTable", table);
+    localStorage.setItem("currentTable", table);
 }
 
-document.getElementById("showTable").innerText = table;
+if(table === "หน้าเคาน์เตอร์") {
+    document.getElementById("tableDisplayHeader").innerHTML = `สั่งที่: <span class="text-orange-600">หน้าเคาน์เตอร์</span>`;
+} else {
+    document.getElementById("tableDisplayHeader").innerHTML = `โต๊ะที่สั่ง: <span class="text-orange-600">${table}</span>`;
+}
 
 function getOrders(){
     return JSON.parse(localStorage.getItem("currentOrders")) || [];
@@ -197,7 +203,8 @@ setInterval(updateStatus, 2000);
 updateStatus();
 
 function goBackToMenu(){
-    window.location.href="menu.html";
+    // 👉 ห้อยเลขโต๊ะ (พารามิเตอร์ ?table=...) กลับไปที่หน้าเมนูด้วย
+    window.location.href = "menu.html?table=" + table;
 }
 </script>
 

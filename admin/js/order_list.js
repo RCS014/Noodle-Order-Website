@@ -132,7 +132,7 @@ tableBox.innerHTML = `
     <h2 class="font-black text-2xl text-slate-900 dark:text-white">
         ${queueTitle}
         <span class="ml-2 bg-orange-500 text-white px-3 py-1 rounded-lg text-sm">
-            โต๊ะ ${table}
+            ${table === "หน้าเคาน์เตอร์" ? "หน้าเคาน์เตอร์" : "โต๊ะ " + table}
         </span>
     </h2>
 </div>
@@ -247,10 +247,12 @@ function openDeleteModal(table, queueId) {
     let modal = document.getElementById('delete-modal');
     
     if (modal) {
-        document.getElementById('delete-table-number').innerText = `โต๊ะ ${table}`;
-        modal.classList.remove('hidden');
+        let displayTable = table === "หน้าเคาน์เตอร์" ? "หน้าเคาน์เตอร์" : `โต๊ะ ${table}`;
+    document.getElementById('delete-table-number').innerText = displayTable;
+    modal.classList.remove('hidden');
     } else {
-        if(confirm(`คุณแน่ใจหรือไม่ว่าต้องการ ยกเลิก ออเดอร์ของ โต๊ะ ${table} ?`)){
+    let displayTable = table === "หน้าเคาน์เตอร์" ? "หน้าเคาน์เตอร์" : `โต๊ะ ${table}`;
+    if(confirm(`คุณแน่ใจหรือไม่ว่าต้องการ ยกเลิก ออเดอร์ของ ${displayTable} ?`)){
             confirmDeleteAction();
         }
     }

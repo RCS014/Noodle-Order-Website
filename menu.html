@@ -163,15 +163,12 @@ class="fixed bottom-5 right-5 sm:bottom-6 sm:right-6 bg-orange-600 hover:bg-oran
 <div id="noodlePage" class="space-y-6 bg-white p-4 sm:p-6 rounded-2xl shadow-md">
 
 <div>
-<label class="font-semibold">เลือกโต๊ะ</label>
-<select id="table" onchange="checkOldStatus()" class="w-full border rounded-lg p-2 mt-2">
-<option value="1">โต๊ะ 1</option>
-<option value="2">โต๊ะ 2</option>
-<option value="3">โต๊ะ 3</option>
-<option value="4">โต๊ะ 4</option>
-<option value="5">โต๊ะ 5</option>
-<option value="หน้าเคาน์เตอร์">หน้าเคาน์เตอร์ (สั่งกลับบ้าน)</option>
-</select>
+<div class="bg-orange-100 p-3 rounded-lg text-center border-2 border-orange-200">
+    <span class="font-bold text-orange-800 text-lg">คุณกำลังสั่งอาหารสำหรับ</span>
+    <h2 id="tableTitle" class="text-2xl font-black text-orange-600 mt-1"></h2>
+    
+    <input type="hidden" id="table" value="">
+</div>
 </div>
 
 <div>

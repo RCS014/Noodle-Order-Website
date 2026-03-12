@@ -194,7 +194,7 @@ function renderCart(){
         box.innerHTML+=`
         <div class="border p-2 rounded flex justify-between">
             <div>
-            โต๊ะ ${i.table}<br>
+            <span class="font-bold text-orange-600">${i.table === "หน้าเคาน์เตอร์" ? "สั่งหน้าเคาน์เตอร์" : "โต๊ะ " + i.table}</span><br>
             ${i.name}<br>
             ${i.spicy ? "🌶 "+i.spicy+"<br>" : ""}
             ${i.sizeName ? i.sizeName+" * "+i.qty : i.price+" x "+i.qty}<br>
@@ -327,6 +327,32 @@ function setupMeatSelection() {
         });
     });
 }
+
+const urlParams = new URLSearchParams(window.location.search);
+    let tableNum = urlParams.get('table') || "หน้าเคาน์เตอร์";
+    
+    // 🛡️ ยันต์กันโต๊ะผี: อนุญาตเฉพาะโต๊ะที่มีในร้านเท่านั้น
+    const allowedTables = ["1", "2", "3", "4", "5", "หน้าเคาน์เตอร์"];
+
+    if (!allowedTables.includes(tableNum)) {
+        // ถ้าเลขโต๊ะไม่อยู่ในรายการด้านบน (เช่น 6, 7, 8 หรือพิมพ์มั่ว)
+        alert("❌ หมายเลขโต๊ะไม่ถูกต้อง กรุณาสแกน QR Code ที่โต๊ะใหม่อีกครั้ง");
+        window.location.href = "index.html"; // เตะกลับหน้าแรกทันที
+    } else {
+        let titleEl = document.getElementById('tableTitle');
+        let tableInput = document.getElementById('table');
+        
+        // 👉 ถ้าระบุโต๊ะถูกต้อง ให้เช็คว่าเป็นหน้าเคาน์เตอร์ไหม
+        if(titleEl) {
+            if(tableNum === "หน้าเคาน์เตอร์") {
+                titleEl.innerText = "สั่งหน้าเคาน์เตอร์";
+            } else {
+                titleEl.innerText = "โต๊ะที่ " + tableNum;
+            }
+        }
+        
+        if(tableInput) tableInput.value = tableNum;
+    }
 
 // 👉 แก้ไข window.onload เดิม ให้เรียก setupMeatSelection() ด้วย
 window.onload = function() {
